@@ -6,6 +6,7 @@ import { useAuth } from "./context/AuthContext";
 import SignIn from "./pages/SignIn";
 import { useEffect, useState } from "react";
 import MapView from './components/MapView';
+import road from './testRoad';
 
 // Get the DB object from the firebase app
 const db = firebase.firestore();
@@ -76,6 +77,11 @@ function App() {
     }
   };
 
+  let parser = new DOMParser();
+  let parsed = parser.parseFromString(road, "application/xml");
+  let nodes = [...parsed.querySelectorAll("trkpt")];
+  let coords = nodes.map(node => [node.attributes.lat.value, node.attributes.lon.value])
+
   // If the user is not authenticated, render the "SignIn" component (Firebase UI)
   if (!isAuthenticated) return <SignIn />;
 
@@ -102,7 +108,7 @@ function App() {
         )}
         <button onClick={signOut}>Logout</button>
       </div>
-      <MapView/>
+      <MapView line={coords}/>
     </div>
   );
 }
