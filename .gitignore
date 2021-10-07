@@ -24,3 +24,6 @@ yarn-error.log*
 
 # docker
 .env
+
+# else
+package-lock.json

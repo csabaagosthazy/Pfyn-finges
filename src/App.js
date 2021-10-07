@@ -5,6 +5,7 @@ import { firebase } from "./initFirebase";
 import { useAuth } from "./context/AuthContext";
 import SignIn from "./pages/SignIn";
 import { useEffect, useState } from "react";
+import MapView from './components/MapView';
 
 // Get the DB object from the firebase app
 const db = firebase.firestore();
@@ -101,6 +102,7 @@ function App() {
         )}
         <button onClick={signOut}>Logout</button>
       </div>
+      <MapView/>
     </div>
   );
 }
