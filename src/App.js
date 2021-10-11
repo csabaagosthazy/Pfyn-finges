@@ -76,6 +76,8 @@ function App() {
     }
   };
 
+
+
   // If the user is not authenticated, render the "SignIn" component (Firebase UI)
   if (!isAuthenticated) return <SignIn />;
 
