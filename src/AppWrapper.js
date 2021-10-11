@@ -3,6 +3,7 @@ import {AuthProvider} from "./context/AuthContext";
 import React, {useState} from "react";
 import {LanguageContext} from "./LanguageContext";
 
+// app childres gets value={{ isAuthenticated, isAdmin }}>
 export default function AppWrapper() {
     const [language, setLanguage] = useState('en');
 

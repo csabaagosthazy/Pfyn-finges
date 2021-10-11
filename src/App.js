@@ -1,5 +1,3 @@
-import "./App.css";
-
 import _ from "lodash";
 import { firebase } from "./initFirebase";
 import { useAuth } from "./context/AuthContext";
@@ -8,31 +6,8 @@ import React, {useContext, useEffect, useState} from "react";
 import MapView from './components/MapView';
 import {LanguageContext, languages} from "./LanguageContext";
 
-class Navbar extends React.Component {
-  render() {
-    return (
-        <div>
-          <button
-              type="button"
-              onClick={this.context.changeLanguageEnglish}
-          >English
-          </button>
-          <button
-              type="button"
-              onClick={this.context.changeLanguageFrench}
-          >French
-          </button>
-        </div>
-    );
-  }
-}
-Navbar.contextType = LanguageContext;
-
 // Get the DB object from the firebase app
 const db = firebase.firestore();
-
-// EXAMPLE : Reference to a collection of POIs
-const COLLECTION_POIS = "pois";
 
 function App() {
   // Get authenticated state using the custom "auth" hook
@@ -136,3 +111,17 @@ function App() {
 }
 
 export default App;
+
+const style = {
+  container: {
+    textAlign: "center",
+    backgroundColor: "#282c34",
+    minHeight: 100,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: "10px",
+    color: "white",
+  },
+};
