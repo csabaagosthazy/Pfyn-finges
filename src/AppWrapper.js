@@ -1,25 +1,15 @@
 import App from "./App";
 import {AuthProvider} from "./context/AuthContext";
-import React, {useState} from "react";
-import {LanguageContext} from "./LanguageContext";
+import React from "react";
+import {LanguageProvider} from "./LanguageContext";
 
-// app childres gets value={{ isAuthenticated, isAdmin }}>
 export default function AppWrapper() {
-    const [language, setLanguage] = useState('en');
-
-    const changeLanguageEnglish = () => {
-        setLanguage('en');
-    }
-
-    const changeLanguageFrench = () => {
-        setLanguage('fr');
-    }
 
     return (
-        <LanguageContext.Provider value={{language, changeLanguageEnglish, changeLanguageFrench}}>
+        <LanguageProvider>
             <AuthProvider>
                 <App/>
             </AuthProvider>
-        </LanguageContext.Provider>
+        </LanguageProvider>
     );
 }

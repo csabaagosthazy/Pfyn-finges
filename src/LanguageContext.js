@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 
 export const LanguageContext = React.createContext({
     language: 'en',
@@ -22,4 +22,28 @@ export const languages  = {
         pois_collection: 'Collection de points d\'intérêt',
         logout: 'Déconnexion',
     }
+};
+
+export const LanguageProvider = ({children}) => {
+    const [language, setLanguage] = useState('en');
+
+    const changeLanguageEnglish = () => {
+        setLanguage('en');
+    }
+
+    const changeLanguageFrench = () => {
+        setLanguage('fr');
+    }
+
+    useEffect((prevLanguage) => {
+        if (language !== prevLanguage) {
+            localStorage.setItem("language", language);
+        }
+    });
+
+    return (
+        <LanguageContext.Provider value={{language, changeLanguageEnglish, changeLanguageFrench}}>
+            {children}
+        </LanguageContext.Provider>
+    )
 };
