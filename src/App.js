@@ -4,8 +4,29 @@ import _ from "lodash";
 import { firebase } from "./initFirebase";
 import { useAuth } from "./context/AuthContext";
 import SignIn from "./pages/SignIn";
-import { useEffect, useState } from "react";
+import React, {useContext, useEffect, useState} from "react";
 import MapView from './components/MapView';
+import {LanguageContext, languages} from "./LanguageContext";
+
+class Navbar extends React.Component {
+  render() {
+    return (
+        <div>
+          <button
+              type="button"
+              onClick={this.context.changeLanguageEnglish}
+          >English
+          </button>
+          <button
+              type="button"
+              onClick={this.context.changeLanguageFrench}
+          >French
+          </button>
+        </div>
+    );
+  }
+}
+Navbar.contextType = LanguageContext;
 
 // Get the DB object from the firebase app
 const db = firebase.firestore();
@@ -19,6 +40,8 @@ function App() {
 
   // EXAMPLE : Store an entire collection of POIs in the state
   const [poisCollection, setPoisCollection] = useState(null);
+
+  let languageContext = useContext(LanguageContext);
 
   useEffect(() => {
     // EXAMPLE : Fetch POIs of your DB
@@ -83,29 +106,32 @@ function App() {
 
   // Normal rendering of the app for authenticated users
   return (
-    <div className="App">
-      <h1>Welcome to the Pfyn-Finges Forest!</h1>
+      <div className="App">
+        <Navbar/>
+        <h1>{languages[languageContext.language].welcome_title}</h1>
 
-      {/* Show role based on admin status (from custom claim) */}
-      <h2>Your role is : {isAdmin ? "Admin" : "User"}</h2>
+        {/* Show role based on admin status (from custom claim) */}
+        <h2>{languages[languageContext.language].your_role}
+          {isAdmin ? languages[languageContext.language].admin :
+              languages[languageContext.language].user}</h2>
 
-      {/* Render the collection of POIs from the DB */}
-      <h4>POIs Collection</h4>
-      <code style={{ margin: "1em" }}>{JSON.stringify(poisCollection)}</code>
+        {/* Render the collection of POIs from the DB */}
+        <h4>{languages[languageContext.language].pois_collection}</h4>
+        <code style={{margin: "1em"}}>{JSON.stringify(poisCollection)}</code>
 
-      {/* Render buttons to add/remove data & log out */}
-      <div style={{ display: "flex" }}>
-        {/* Admin-only tasks */}
-        {isAdmin && (
-          <>
-            <button onClick={addDummyData}>Add Dummy Data</button>
-            <button onClick={cleanDB}>Clean DB</button>
-          </>
-        )}
-        <button onClick={signOut}>Logout</button>
+        {/* Render buttons to add/remove data & log out */}
+        <div style={{display: "flex"}}>
+          {/* Admin-only tasks */}
+          {isAdmin && (
+              <>
+                <button onClick={addDummyData}>Add Dummy Data</button>
+                <button onClick={cleanDB}>Clean DB</button>
+              </>
+          )}
+          <button onClick={signOut}>{languages[languageContext.language].logout}</button>
+        </div>
+        <MapView/>
       </div>
-      <MapView/>
-    </div>
   );
 }
 

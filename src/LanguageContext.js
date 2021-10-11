@@ -22,4 +22,4 @@ export const languages  = {
         pois_collection: 'Collection de points d\'intérêt',
         logout: 'Déconnexion',
     }
-}; 
+};
