@@ -1,11 +1,11 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 
 export const LanguageContext = React.createContext({
     language: 'en',
     changeLanguage: null
 });
 
-export const languages  = {
+export const languages = {
     en: {
         welcome_title: 'Welcome to Pfyn-Finges !',
         admin: 'Admin',
@@ -23,6 +23,13 @@ export const languages  = {
         logout: 'Déconnexion',
     }
 };
+
+export const languagesList = [
+    {
+        code: 'en',
+        name: 'English'
+    }
+];
 
 export const LanguageProvider = ({children}) => {
     const [language, setLanguage] = useState('en');
@@ -47,3 +54,5 @@ export const LanguageProvider = ({children}) => {
         </LanguageContext.Provider>
     )
 };
+
+export const useLang = () => useContext(LanguageContext);

@@ -4,6 +4,7 @@ import "./index.css";
 import reportWebVitals from "./reportWebVitals";
 import AppWrapper from "./AppWrapper";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "flag-icon-css/css/flag-icon.min.css";
 
 ReactDOM.render(
   <React.StrictMode>
