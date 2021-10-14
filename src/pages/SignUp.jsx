@@ -1,13 +1,15 @@
 import { useState, useCallback, useRef } from "react";
 import { firebase } from "../initFirebase";
 import { Link, useHistory } from "react-router-dom";
-
 import { Form, Button, Card, Alert } from "react-bootstrap";
+import {createUserData} from "../services/dbService";
 
 const SignUp = () => {
   const emailRef = useRef();
   const passwordRef = useRef();
   const passwordConfirmRef = useRef();
+  const lastnameRef = useRef();
+  const firstnameRef = useRef();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const history = useHistory();
@@ -19,8 +21,11 @@ const SignUp = () => {
     firebase
       .auth()
       .createUserWithEmailAndPassword(emailRef.current.value, passwordRef.current.value)
+        .then((user) =>
+          createUserData(user, firstnameRef.current.value, lastnameRef.current.value))
       .then((userCredential) => {
         // Signed in
+        console.log(userCredential);
         let user = userCredential.user;
         console.log(user);
         history.push("/successLogin");
@@ -39,6 +44,14 @@ const SignUp = () => {
             <Form.Group id="email">
               <Form.Label>Email</Form.Label>
               <Form.Control type="email" ref={emailRef} required />
+            </Form.Group>
+            <Form.Group id="firstname">
+              <Form.Label>Firstname</Form.Label>
+              <Form.Control type="firstname" ref={firstnameRef} required />
+            </Form.Group>
+            <Form.Group id="lastname">
+              <Form.Label>Lastname</Form.Label>
+              <Form.Control type="lastname" ref={lastnameRef} required />
             </Form.Group>
             <Form.Group id="password">
               <Form.Label>Password</Form.Label>
