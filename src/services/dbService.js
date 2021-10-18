@@ -4559,7 +4559,7 @@ const road = `<?xml version="1.0"?>
 export default road;
 
 /* The road parameter has to be an XML string */
-export async function getPois(){
+export async function showGPX(){
     const result = road;
     /* Fetch something from the database, and replace the road with the content of the DB
     *  It might get a user, with all pois and points related to this user */
@@ -4582,3 +4582,21 @@ export async function createUserData(user, firstname, lastname) {
     }
     return user;
 }
+
+export async function getGPXAsString(user) {
+    let db = firebase.firestore();
+    var dataUser = db.collection("users").doc(user.uid);
+    let gpxToShow;
+    await dataUser.get().then((doc) => {
+        if (doc.exists) {
+            gpxToShow = doc.data().gpx;
+            console.log("Document data:", gpxToShow);
+        }else{
+            console.log("no such document !");
+        }
+    }).catch((error) => {
+        console.log("Error getting document: ", error);
+    });
+    return gpxToShow;
+}
+

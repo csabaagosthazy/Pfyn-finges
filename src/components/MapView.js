@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { MapContainer, Polyline, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import { getPois } from "../services/dbService";
+import { showGPX } from "../services/dbService";
 import GetPois from "./GetPois";
 
 class MapView extends Component {
@@ -15,7 +15,7 @@ class MapView extends Component {
   }
 
   async componentDidMount() {
-    const positions = await getPois();
+    const positions = await showGPX();
     console.log(positions);
     this.setState({ positions });
   }
