@@ -1,5 +1,5 @@
 import {useAuth} from "../context/AuthContext";
-import {getGPXAsString} from "../services/dbService";
+import {getGPXAsString, getUserParams} from "../services/dbService";
 import MapView from "../components/MapView";
 import {useEffect, useState} from "react";
 import {Dropdown} from "react-bootstrap";
@@ -12,6 +12,7 @@ const UserPage = () => {
     useEffect(async () => {
         let history = await getGPXAsString(user);
         setgpxHistory(history);
+        console.log(getUserParams((user)));
     }, [])
 
     function handleClick(event) {

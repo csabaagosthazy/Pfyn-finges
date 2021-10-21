@@ -2,9 +2,11 @@ import React, { Component } from "react";
 import { MapContainer, Polyline, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { showGPX } from "../services/dbService";
-import GetPois from "./GetPois";
+import ShowPois from "./ShowPois";
+import {useAuth} from "../context/AuthContext";
 
 class MapView extends Component {
+
   constructor(props) {
     super(props);
     this.state = {
@@ -28,14 +30,13 @@ class MapView extends Component {
         center={currentLocation}
         zoom={zoom}
         style={{ height: "720px", width: "1280px" }}
-        scrollWheelZoom={false}
       >
         <TileLayer url="https://wmts20.geo.admin.ch/1.0.0/ch.swisstopo.pixelkarte-farbe/default/current/3857/{z}/{x}/{y}.jpeg" />
         <Polyline
           pathOptions={{ fillColor: "red", color: "orange", weight: 6 }}
           positions={this.state.positions}
         />
-        <GetPois />
+        <ShowPois user = {this.props.user}/>
       </MapContainer>
     );
   }
