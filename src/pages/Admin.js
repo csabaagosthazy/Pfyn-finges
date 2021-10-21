@@ -68,8 +68,8 @@ const AdminPage = () => {
           </Button>
         </Modal.Footer>
       </Modal>
-      {/*   {isOpen ? <AddPoi show={showModal} isOpen={isOpen} /> : null}
-      <MapView /> */}
+      {/*{isOpen ? <AddPoi show={showModal} isOpen={isOpen} /> : null}*/
+      <MapView user = {user} />}
       <button onClick={() => signOut()}>Sign out</button>
     </>
   );
