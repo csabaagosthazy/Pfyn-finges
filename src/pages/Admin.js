@@ -3,7 +3,7 @@ import { useAuth } from "../context/AuthContext";
 
 import { firebase } from "../initFirebase";
 
-import { Form, Button, Modal, Alert } from "react-bootstrap";
+import { Form, Button, Modal, Table } from "react-bootstrap";
 import AddPoi from "../components/AddPoi";
 import MapView from "../components/MapView";
 /* 
@@ -17,13 +17,29 @@ const AdminPage = () => {
   const COLLECTION_POIS = "pois";
   const poisCollection = db.collection(COLLECTION_POIS);
 
-  const { user, signOut } = useAuth();
+  const { user, signOut, isAdmin } = useAuth();
   const [show, setShow] = useState(false);
   const [error, setError] = useState("");
+  const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const handleShow = () => setShow(true);
   const handleClose = () => setShow(false);
+
+  const getAllPois = async () => {
+    const data = [
+      {
+        id: "x",
+        title: "xtitle",
+        latitude: "xlat",
+        longitude: "xlong",
+        description: "xdesc",
+        inputWebsite: "xweb",
+      },
+    ];
+
+    return data;
+  };
 
   const onSubmit = async (event, title, latitude, longitude, description, inputWebsite) => {
     event.preventDefault();
@@ -47,8 +63,10 @@ const AdminPage = () => {
     if (!error) handleClose();
   };
 
-  useEffect(() => {
+  useEffect(async () => {
     console.log("Admin rendered");
+    const pois = await getAllPois();
+    setData(pois);
   }, []);
 
   return (
@@ -57,25 +75,20 @@ const AdminPage = () => {
       <Button onClick={handleShow}>Create new POI</Button>
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Login Form</Modal.Title>
+          <Modal.Title>Creat new POI</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <TestForm onSubmit={onSubmit} />
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Close Modal
-          </Button>
-        </Modal.Footer>
       </Modal>
+      <TableComp data={data} />
+
       {/*   {isOpen ? <AddPoi show={showModal} isOpen={isOpen} /> : null}
       <MapView /> */}
       <button onClick={() => signOut()}>Sign out</button>
     </>
   );
 };
-
-export default AdminPage;
 
 const TestForm = ({ onSubmit }) => {
   const [title, setTitle] = useState("");
@@ -101,7 +114,7 @@ const TestForm = ({ onSubmit }) => {
   };
 
   return (
-    <div className="d-flex align-items-center justify-content-center" style={{ height: "100vh" }}>
+    <div>
       <Form noValidate validated={validated} onSubmit={handleSubmit}>
         <Form.Group controlId="title">
           <Form.Label>POI title: </Form.Label>
@@ -153,10 +166,53 @@ const TestForm = ({ onSubmit }) => {
             required
           />
         </Form.Group>
-        <Button variant="primary" type="submit">
+        <Button style={{ margin: 10 }} variant="primary" type="submit">
           Submit
         </Button>
       </Form>
     </div>
   );
 };
+
+const TableComp = ({ data }) => {
+  //headers, body => array
+  const headers = ["", "Title", "Latitude", "Longitude", "Website", ""];
+
+  const handleDelete = async (event) => {
+    console.log(event.currentTarget.value);
+  };
+
+  return data.length > 0 ? (
+    <div>
+      <p>List of POI</p>
+      <Table striped bordered hover>
+        <thead>
+          <tr>
+            {headers.map((head, i) => (
+              <th key={i}>{head}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {data.map((item) => (
+            <tr key={item.id}>
+              <td>{item.title}</td>
+              <td>{item.latitude}</td>
+              <td>{item.longitude}</td>
+              <td>{item.inputWebsite}</td>
+              <td>
+                <Button variant="danger" size="sm" value={item.id} onClick={handleDelete}>
+                  Delete
+                </Button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+    </div>
+  ) : (
+    <p>There are no POI in the database</p>
+  );
+};
+
+export default AdminPage;
