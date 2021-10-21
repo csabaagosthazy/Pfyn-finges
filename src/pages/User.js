@@ -1,5 +1,5 @@
 import {useAuth} from "../context/AuthContext";
-import {getGPXAsString, getUserParams} from "../services/dbService";
+import {getGPXAsString, getPoisByUser, getUserParams} from "../services/dbService";
 import MapView from "../components/MapView";
 import {useEffect, useState} from "react";
 import {Dropdown} from "react-bootstrap";
@@ -8,12 +8,20 @@ import {Dropdown} from "react-bootstrap";
 const UserPage = () => {
     const {user, signOut} = useAuth();
     const [gpxHistory, setgpxHistory] = useState();
+    const [pois, setPois] = useState([]);
 
     useEffect(async () => {
         let history = await getGPXAsString(user);
         setgpxHistory(history);
         console.log(getUserParams((user)));
+
+        console.log(user);
+        let poisList = await getPoisByUser(user)
+        setPois(poisList);
     }, [])
+
+
+
 
     function handleClick(event) {
         event.preventDefault();
@@ -26,7 +34,7 @@ const UserPage = () => {
         <>
             <h1>Welcome on user page {user?.email}</h1>
             <button onClick={() => signOut()}>Sign out</button>
-            <MapView/>
+            <MapView pois = {pois}/>
 
             <Dropdown>
                 <Dropdown.Toggle variant="success" id="dropdown-basic">
