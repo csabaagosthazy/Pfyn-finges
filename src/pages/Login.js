@@ -2,7 +2,7 @@ import { useState, useCallback, useRef } from "react";
 import { firebase } from "../initFirebase";
 
 import { Form, Button, Card, Alert } from "react-bootstrap";
-import { Link, useHistory } from "react-router-dom";
+import { Link, useHistory, Redirect } from "react-router-dom";
 const Login = () => {
   const emailRef = useRef();
   const passwordRef = useRef();
