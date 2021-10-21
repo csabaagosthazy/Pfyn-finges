@@ -36,7 +36,7 @@ class MapView extends Component {
           pathOptions={{ fillColor: "red", color: "orange", weight: 6 }}
           positions={this.state.positions}
         />
-        <ShowPois user = {this.props.user}/>
+        <ShowPois pois = {this.props.pois} />
       </MapContainer>
     );
   }

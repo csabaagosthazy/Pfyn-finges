@@ -6,18 +6,11 @@ import {useAuth} from "../context/AuthContext";
 import {getPoisByUser} from "../services/dbService";
 
 function ShowPois(props) {
-  const [pois, setPois] = useState([]);
 
-  useEffect(async () => {
-    let poisList = await getPoisByUser(props.user)
-    setPois(poisList);
-  }, []);
-
-console.log("poois", pois)
   return (
 
     <div>
-      {pois.map((poi, i) => (
+      {props.pois.map((poi, i) => (
         <Marker key={i} position={[poi.latitude, poi.longitude]}>
           <Popup>{poi.title}</Popup>
         </Marker>
