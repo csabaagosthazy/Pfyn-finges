@@ -3,21 +3,35 @@ import { getGPXAsString, getPoisByUser, getUserParams } from "../services/dbServ
 import MapView from "../components/MapView";
 import { useEffect, useState } from "react";
 import { Dropdown } from "react-bootstrap";
+import { showGPX } from "../services/dbService";
+
+const test = {
+  currentLocation: { lat: 46.294574, lng: 7.569767 },
+  zoom: 16,
+};
 
 const UserPage = () => {
   const { user, signOut } = useAuth();
   const [gpxHistory, setgpxHistory] = useState();
-  const [pois, setPois] = useState([]);
+  const [pois, setPois] = useState();
+  const [positions, setPositions] = useState();
 
-  useEffect(async () => {
+  useEffect(() => {
+    loadPois();
+
+    loadGpx();
+    showGPX().then((positions) => setPositions(positions));
+  }, []);
+
+  const loadPois = async () => {
     let history = await getGPXAsString(user);
     setgpxHistory(history);
-    console.log(getUserParams(user));
+  };
 
-    console.log(user);
+  const loadGpx = async () => {
     let poisList = await getPoisByUser(user);
     setPois(poisList);
-  }, []);
+  };
 
   function handleClick(event) {
     event.preventDefault();
@@ -30,7 +44,7 @@ const UserPage = () => {
     <>
       <h1>Welcome on user page {user?.email}</h1>
       <button onClick={() => signOut()}>Sign out</button>
-      <MapView pois={pois} />
+      <MapView pois={pois} positions={positions} test={test} />
 
       <Dropdown>
         <Dropdown.Toggle variant="success" id="dropdown-basic">
