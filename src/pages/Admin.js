@@ -100,10 +100,15 @@ const AdminPage = () => {
           <TestForm onSubmit={onSubmit} />
         </Modal.Body>
       </Modal>
+<<<<<<< HEAD
       <TableComp data={data} />
 
       {/*   {isOpen ? <AddPoi show={showModal} isOpen={isOpen} /> : null}
       <MapView /> */}
+=======
+      {/*{isOpen ? <AddPoi show={showModal} isOpen={isOpen} /> : null}*/
+      <MapView user = {user} />}
+>>>>>>> master
       <button onClick={() => signOut()}>Sign out</button>
     </>
   );
