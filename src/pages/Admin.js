@@ -3,7 +3,7 @@ import { useAuth } from "../context/AuthContext";
 
 import { firebase } from "../initFirebase";
 
-import { Form, Button, Modal, Table } from "react-bootstrap";
+import { Form, Button, Modal, Table, InputGroup, Dropdown } from "react-bootstrap";
 import AddPoi from "../components/AddPoi";
 import MapView from "../components/MapView";
 /* 
@@ -35,13 +35,31 @@ const AdminPage = () => {
         longitude: "xlong",
         description: "xdesc",
         inputWebsite: "xweb",
+        isActive: true,
+      },
+      {
+        id: "y",
+        title: "ytitle",
+        latitude: "ylat",
+        longitude: "ylong",
+        description: "ydesc",
+        inputWebsite: "yweb",
+        isActive: false,
       },
     ];
 
     return data;
   };
 
-  const onSubmit = async (event, title, latitude, longitude, description, inputWebsite) => {
+  const onSubmit = async (
+    event,
+    title,
+    latitude,
+    longitude,
+    description,
+    inputWebsite,
+    isActive
+  ) => {
     event.preventDefault();
     console.log("submit");
     setLoading(true);
@@ -53,6 +71,7 @@ const AdminPage = () => {
         longitude,
         description,
         inputWebsite,
+        isActive,
       });
     } catch (e) {
       console.error(e);
@@ -96,6 +115,7 @@ const TestForm = ({ onSubmit }) => {
   const [longitude, setLongitude] = useState("");
   const [description, setDescription] = useState("");
   const [inputWebsite, setInputWebsite] = useState("");
+  const [isActive, setIsActive] = useState(true);
   const [validated, setValidated] = useState(false);
 
   const handleSubmit = async (e) => {
@@ -166,6 +186,16 @@ const TestForm = ({ onSubmit }) => {
             required
           />
         </Form.Group>
+        <Form.Group controlId="Website">
+          <Form.Label>Active</Form.Label>
+          <Form.Control
+            type="text"
+            onChange={(e) => setIsActive(e.target.value)}
+            value={isActive}
+            placeholder="Is poi active"
+            required
+          />
+        </Form.Group>
         <Button style={{ margin: 10 }} variant="primary" type="submit">
           Submit
         </Button>
@@ -178,8 +208,14 @@ const TableComp = ({ data }) => {
   //headers, body => array
   const headers = ["", "Title", "Latitude", "Longitude", "Website", ""];
 
-  const handleDelete = async (event) => {
-    console.log(event.currentTarget.value);
+  const handleSelectAction = (eventKey, id) => {
+    console.log(eventKey);
+    console.log(id);
+  };
+
+  const handleSelectRow = (event) => {
+    console.log(event.target.name);
+    //filter out data array
   };
 
   return data.length > 0 ? (
@@ -196,14 +232,24 @@ const TableComp = ({ data }) => {
         <tbody>
           {data.map((item) => (
             <tr key={item.id}>
+              <td>
+                <InputGroup.Checkbox name={item.id} onChange={handleSelectRow} />
+              </td>
               <td>{item.title}</td>
               <td>{item.latitude}</td>
               <td>{item.longitude}</td>
               <td>{item.inputWebsite}</td>
               <td>
-                <Button variant="danger" size="sm" value={item.id} onClick={handleDelete}>
-                  Delete
-                </Button>
+                <Dropdown onSelect={(eventKey) => handleSelectAction(eventKey, item.id)}>
+                  <Dropdown.Toggle variant="primary" id="action-dropdown">
+                    Actions
+                  </Dropdown.Toggle>
+                  <Dropdown.Menu>
+                    <Dropdown.Item eventKey="update">Update</Dropdown.Item>
+                    <Dropdown.Item eventKey="deactivate">Deactivate</Dropdown.Item>
+                    <Dropdown.Item eventKey="showqr">Show QR</Dropdown.Item>
+                  </Dropdown.Menu>
+                </Dropdown>
               </td>
             </tr>
           ))}
