@@ -42,7 +42,7 @@ function MapView(props) {
                 pathOptions={{fillColor: "red", color: "orange", weight: 10}}
                 positions={positions}
             />}
-            <MapCenter position={positions && positions.length > 0 && positions[0]}/>
+            {positions && <MapCenter position={positions.length > 0 && positions[0]}/>}
             {props.pois && <ShowPois pois={props.pois}/>}
         </MapContainer>
     );
