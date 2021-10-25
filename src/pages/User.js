@@ -9,18 +9,19 @@ const UserPage = () => {
     const {user, signOut} = useAuth();
     const [gpxHistory, setgpxHistory] = useState();
     const [gpx, setgpx] = useState();
-    const [pois, setPois] = useState([]);
+    const [pois, setPois] = useState();
 
     const GpxToDisplay = useCallback(async () => {
         let history = await getGPXAsString(user);
         setgpxHistory(history);
-        let poisList = await getPoisByUser(user)
+        setgpx(history[history.length-1]);
+        let poisList = await getPoisByUser(user);
         setPois(poisList);
-    }, [gpx])
+    }, [])
 
     useEffect(() => {
         GpxToDisplay();
-    }, [GpxToDisplay])
+    }, [])
 
     function handleClick(event) {
         event.preventDefault();
@@ -28,7 +29,7 @@ const UserPage = () => {
         setgpx(event.target.name);
     }
 
-    if (!gpxHistory || !pois)
+    if (!gpx || !pois)
         return <p>"Loading"</p>;
     else
     return (

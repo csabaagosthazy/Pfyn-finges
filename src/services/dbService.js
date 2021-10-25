@@ -4640,7 +4640,7 @@ export async function getPoisByUser(user, isAdmin) {
     let pois = [];
     for(let poi in poisToShow)
     {
-        db.collection("pois").doc(poisToShow[poi]).get().then(poi => pois.push(poi.data()));
+        db.collection("pois").doc(poisToShow[poi]).get().then(poi => pois.push({id: poi.id, ...poi.data()}));
     }
     return pois;
 }

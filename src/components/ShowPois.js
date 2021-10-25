@@ -4,9 +4,9 @@ import markerIconPng from "leaflet/dist/images/marker-icon.png"
 
 function ShowPois(props) {
     return (
-        <div>
-            {props.pois.map((poi, i) => (
-                <Marker key={i} position={[poi.latitude, poi.longitude]} icon={new Icon({iconUrl: markerIconPng, iconSize: [25, 41], iconAnchor: [12, 41]})}>
+        <>
+            {props.pois.map((poi) => (
+                <Marker key={poi.id} position={[poi.latitude, poi.longitude]} icon={new Icon({iconUrl: markerIconPng, iconSize: [25, 41], iconAnchor: [12, 41]})}>
                     <Popup>
                         {poi.title}<br/>
                         <a href={poi.inputWebsite}>{poi.inputWebsite}</a><br/>
@@ -14,7 +14,7 @@ function ShowPois(props) {
                     </Popup>
                 </Marker>
             ))}
-        </div>
+        </>
     );
 }
 
