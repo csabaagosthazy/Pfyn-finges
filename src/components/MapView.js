@@ -7,8 +7,11 @@ import ShowPois from "./ShowPois";
 function MapView(props) {
 
     let [currentLocation, setCurrentLocation] = useState({lat: 46.294574, lng: 7.569767});
-    let [zoom, setZoom] = useState(16);
+    let [zoom, setZoom] = useState(14);
     let [positions, setPositions] = useState(null);
+
+    console.log("POI from admin is " + props.pois);
+    console.log("GPX from admin is " + props.gpx);
 
     useEffect(() => {
         async function getPositions() {
@@ -39,10 +42,23 @@ function MapView(props) {
                 pathOptions={{fillColor: "red", color: "orange", weight: 10}}
                 positions={positions}
             />}
-            <ShowPois pois={props.pois}/>
+            <MapCenter position={positions && positions.length > 0 && positions[0]}/>
+            {props.pois && <ShowPois pois={props.pois}/>}
         </MapContainer>
     );
 
+}
+
+function MapCenter({position}) {
+    const map = useMap();
+
+    if(!position){
+        return null;
+    }
+
+    map.panTo(position);
+
+    return null;
 }
 
 export default MapView;
