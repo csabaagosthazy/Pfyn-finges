@@ -17,18 +17,11 @@ function MapView(props) {
         async function getPositions() {
             let positions = await showGPX(props.gpx);
             setPositions(positions);
-            console.log("poi to show", props.pois);
         }
 
         getPositions();
 
     }, [props.gpx])
-
-    /*    refreshMapCenter(){
-            const map = useMap();
-            console.log("lat long", this.props.gpx[0])
-            map.panTo(this.props.gpx[0]);
-        }*/
 
     return (
         <MapContainer
@@ -42,7 +35,7 @@ function MapView(props) {
                 pathOptions={{fillColor: "red", color: "orange", weight: 10}}
                 positions={positions}
             />}
-            {positions && <MapCenter position={positions.length > 0 && positions[0]}/>}
+            {positions && <MapCenter position={positions.length > 0 && positions[Math.round(positions.length/2)]}/>}
             {props.pois && <ShowPois pois={props.pois}/>}
         </MapContainer>
     );
@@ -51,13 +44,7 @@ function MapView(props) {
 
 function MapCenter({position}) {
     const map = useMap();
-
-    if(!position){
-        return null;
-    }
-
     map.panTo(position);
-
     return null;
 }
 
