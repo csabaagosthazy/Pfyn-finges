@@ -1,16 +1,9 @@
 import { useState, useEffect } from "react";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/Auth2";
 
 import { firebase } from "../initFirebase";
 
-import {
-  Form,
-  Button,
-  Modal,
-  Table,
-  InputGroup,
-  Dropdown,
-} from "react-bootstrap";
+import { Form, Button, Modal, Table, InputGroup, Dropdown } from "react-bootstrap";
 import DataTable from "../components/table/DataTable";
 import AddPoi from "../components/AddPoi";
 import MapView from "../components/MapView";
@@ -25,7 +18,7 @@ const AdminPage = () => {
   const COLLECTION_POIS = "pois";
   const poisCollection = db.collection(COLLECTION_POIS);
 
-  const { user, signOut, isAdmin } = useAuth();
+  const { currentUser, signOut, isAdmin } = useAuth();
   const [show, setShow] = useState(false);
   const [error, setError] = useState("");
   const [data, setData] = useState([]);
@@ -107,7 +100,7 @@ const AdminPage = () => {
   if (data.length === 0) return <p>Loading</p>;
   return (
     <>
-      <h1>Welcome on admin page {user?.email}</h1>
+      <h1>Welcome on admin page</h1>
       <Button onClick={handleShow}>Create new POI</Button>
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
@@ -123,7 +116,6 @@ const AdminPage = () => {
       {/*   {isOpen ? <AddPoi show={showModal} isOpen={isOpen} /> : null}
       <MapView /> */}
       {/*{isOpen ? <AddPoi show={showModal} isOpen={isOpen} /> : null} <MapView user={user} />*/}
-      <button onClick={() => signOut()}>Sign out</button>
     </>
   );
 };
@@ -148,15 +140,7 @@ const TestForm = ({ onSubmit }) => {
 
     if (form.checkValidity()) {
       e.preventDefault();
-      onSubmit(
-        e,
-        title,
-        latitude,
-        longitude,
-        description,
-        inputWebsite,
-        isActive
-      );
+      onSubmit(e, title, latitude, longitude, description, inputWebsite, isActive);
     }
   };
 
@@ -218,11 +202,7 @@ const TestForm = ({ onSubmit }) => {
             required
           />
         </Form.Group>
-        <Form.Group
-          className="mb-3"
-          controlId="activeCheck"
-          style={style.fromGroup}
-        >
+        <Form.Group className="mb-3" controlId="activeCheck" style={style.fromGroup}>
           <Form.Check
             type="checkbox"
             label="Activate POI"
@@ -267,27 +247,20 @@ const TableComp = ({ data }) => {
           {data.map((item) => (
             <tr key={item.id}>
               <td>
-                <InputGroup.Checkbox
-                  name={item.id}
-                  onChange={handleSelectRow}
-                />
+                <InputGroup.Checkbox name={item.id} onChange={handleSelectRow} />
               </td>
               <td>{item.title}</td>
               <td>{item.latitude}</td>
               <td>{item.longitude}</td>
               <td>{item.inputWebsite}</td>
               <td>
-                <Dropdown
-                  onSelect={(eventKey) => handleSelectAction(eventKey, item.id)}
-                >
+                <Dropdown onSelect={(eventKey) => handleSelectAction(eventKey, item.id)}>
                   <Dropdown.Toggle variant="primary" id="action-dropdown">
                     Actions
                   </Dropdown.Toggle>
                   <Dropdown.Menu>
                     <Dropdown.Item eventKey="update">Update</Dropdown.Item>
-                    <Dropdown.Item eventKey="deactivate">
-                      Deactivate
-                    </Dropdown.Item>
+                    <Dropdown.Item eventKey="deactivate">Deactivate</Dropdown.Item>
                     <Dropdown.Item eventKey="showqr">Show QR</Dropdown.Item>
                   </Dropdown.Menu>
                 </Dropdown>

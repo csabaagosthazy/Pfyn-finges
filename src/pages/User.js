@@ -1,24 +1,20 @@
-import { useAuth } from "../context/AuthContext";
-import {
-  getGPXAsString,
-  getPoisByUser,
-  getUserParams,
-} from "../services/dbService";
+import { useAuth } from "../context/Auth2";
+import { getGPXAsString, getPoisByUser, getUserParams } from "../services/dbService";
 import MapView from "../components/MapView";
 import { useCallback, useEffect, useState } from "react";
 import { Dropdown } from "react-bootstrap";
 
 const UserPage = () => {
-  const { user, signOut } = useAuth();
+  const { currentUser, signOut } = useAuth();
   const [gpxHistory, setgpxHistory] = useState();
   const [gpx, setgpx] = useState();
   const [pois, setPois] = useState();
 
   const GpxToDisplay = useCallback(async () => {
-    let history = await getGPXAsString(user);
+    let history = await getGPXAsString(currentUser);
     setgpxHistory(history);
     setgpx(history[history.length - 1]);
-    let poisList = await getPoisByUser(user, false);
+    let poisList = await getPoisByUser(currentUser, false);
     setPois(poisList);
     console.log("POI for user", poisList);
   }, []);
@@ -37,8 +33,7 @@ const UserPage = () => {
   else
     return (
       <>
-        <h1>Welcome on user page {user?.email}</h1>
-        <button onClick={() => signOut()}>Sign out</button>
+        <h1>Welcome on user page</h1>
         <h2>{gpx} is being displayed</h2>
         <MapView pois={pois} gpx={gpx} />
 
@@ -49,11 +44,7 @@ const UserPage = () => {
 
           <Dropdown.Menu>
             {gpxHistory.map((jesus, index) => (
-              <Dropdown.Item
-                name={jesus}
-                onClick={(event) => handleClick(event)}
-                key={index}
-              >
+              <Dropdown.Item name={jesus} onClick={(event) => handleClick(event)} key={index}>
                 {jesus}
               </Dropdown.Item>
             ))}

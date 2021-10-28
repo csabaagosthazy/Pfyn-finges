@@ -1,34 +1,56 @@
-import { useState, useCallback, useRef } from "react";
-import { firebase } from "../initFirebase";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { useAuth } from "../context/Auth2";
 
 import { Form, Button, Card, Alert } from "react-bootstrap";
 import { Link, useHistory, Redirect } from "react-router-dom";
+
 const Login = () => {
   const emailRef = useRef();
   const passwordRef = useRef();
+  const isMounted = useRef(null);
+  const { login, checkAdmin, currentUser } = useAuth();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const history = useHistory();
 
-  const handleSubmit = useCallback(async (e) => {
+  useEffect(() => {
+    // executed when component mounted
+    isMounted.current = true;
+    return () => {
+      // executed when unmount
+      isMounted.current = false;
+    };
+  }, []);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    //const { email, password } = inputs;
     setError("");
     setLoading(true);
-    firebase
-      .auth()
-      .signInWithEmailAndPassword(emailRef.current.value, passwordRef.current.value)
-      .then((userCredential) => {
-        let user = userCredential.user;
-        console.log(user);
-        history.push("/successLogin");
-      })
-      .catch((error) => {
-        let errorCode = error.code;
-        let errorMessage = error.message;
-        setError("Failed to log in");
-      });
-  });
+    let user;
+    let isAdmin;
+    try {
+      user = await login(emailRef.current.value, passwordRef.current.value);
+      isAdmin = await checkAdmin(user, true);
+    } catch {
+      setError("Failed to log in");
+    } finally {
+      console.log(user);
+      console.log(!!user);
+      if (isMounted.current) {
+        setLoading(false);
+        if (!!user) {
+          console.log("Yes user");
+          console.log(isAdmin);
+          alert("Authorization success!");
+          if (isAdmin) history.push("/admin");
+          else history.push("/user");
+        } else {
+          alert("Authorization failed!");
+          history.push("/");
+        }
+      }
+    }
+  };
 
   return (
     <>

@@ -1,14 +1,18 @@
-import React, {useContext} from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
+
+import { useAuth } from "../context/Auth2";
 
 import Navbar from "react-bootstrap/Navbar";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
-import {Dropdown} from "react-bootstrap";
-import {languagesList} from "../context/LanguageContext";
+import { Dropdown } from "react-bootstrap";
+import { languagesList } from "../context/LanguageContext";
 
 export const Navigation = (props) => {
   //auth user and role needed
+  const { currentUser, logout, isAdmin } = useAuth();
+  console.log("navbar");
   return (
     <Navbar bg="dark" variant="dark">
       <Container>
@@ -26,19 +30,30 @@ export const Navigation = (props) => {
         </Nav>
         <Nav className="justify-content-end" activeKey="/home">
           <Nav.Item>
-            <Link to="/login">Log In</Link>
+            {currentUser ? (
+              <Nav.Link onClick={logout}>Logout</Nav.Link>
+            ) : (
+              <Nav.Link href="/login">Login</Nav.Link>
+            )}
           </Nav.Item>
+          {
+            <Nav.Item as="li">
+              <Nav.Link eventkey={"role"} disabled>
+                {!currentUser ? "" : isAdmin ? "admin" : "user"}
+              </Nav.Link>
+            </Nav.Item>
+          }
         </Nav>
         <Dropdown>
           <Dropdown.Toggle variant="success" id="dropdown-basic">
             Choose your language
           </Dropdown.Toggle>
           <Dropdown.Menu>
-            {languagesList.map(({code, name}) => (
-                <Dropdown.Item key={code}>
-                <span className={`flag-icon flag-icon-${code} mx-2`}/>
+            {languagesList.map(({ code, name }) => (
+              <Dropdown.Item key={code}>
+                <span className={`flag-icon flag-icon-${code} mx-2`} />
                 {name}
-                </Dropdown.Item>
+              </Dropdown.Item>
             ))}
           </Dropdown.Menu>
         </Dropdown>
