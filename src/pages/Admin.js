@@ -11,7 +11,7 @@ import MapView from "../components/MapView";
 Generate QR Code
 </Button>
 <QRCode value={qrCode} /> */
-
+//
 const AdminPage = () => {
   const db = firebase.firestore();
   const COLLECTION_POIS = "pois";
