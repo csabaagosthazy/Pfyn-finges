@@ -19,6 +19,7 @@ export const AuthProvider = ({ children }) => {
 
   // Listen to the Firebase Auth state and set the local state.
   useEffect(() => {
+    setLoading(true);
     const unregisterAuthObserver = firebase.auth().onAuthStateChanged(async (user) => {
       setIsAuthenticated(!!user);
       setUser(user);
@@ -31,7 +32,7 @@ export const AuthProvider = ({ children }) => {
         setIsAdmin(!!idTokenResult.claims.admin);
       }
     });
-
+    setLoading(false);
     // Make sure we un-register Firebase observers when the component unmounts.
     return () => unregisterAuthObserver();
   }, []);
@@ -45,7 +46,7 @@ export const AuthProvider = ({ children }) => {
 
   // Render the context provider and provide the "isAuthenticated" & "isAdmin" values
   return (
-    <AuthContext.Provider value={{ isAuthenticated, user, isAdmin, signOut }}>
+    <AuthContext.Provider value={{ loading, isAuthenticated, user, isAdmin, signOut }}>
       {children}
     </AuthContext.Provider>
   );
