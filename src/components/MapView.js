@@ -13,11 +13,14 @@ function MapView(props) {
   let [positions, setPositions] = useState(null);
 
   console.log("MAPVIEW POIS", props.pois);
+  console.log("MAPVIEW POSITION", positions);
 
   useEffect(() => {
     async function getPositions() {
-      let positions = await showGPX(props.gpx);
-      setPositions(positions);
+      if (props.gpx) {
+        let positions = await showGPX(props.gpx);
+        setPositions(positions);
+      }
     }
 
     getPositions();
@@ -32,7 +35,7 @@ function MapView(props) {
       <TileLayer url="https://wmts20.geo.admin.ch/1.0.0/ch.swisstopo.pixelkarte-farbe/default/current/3857/{z}/{x}/{y}.jpeg" />
       {positions && (
         <Polyline
-          pathOptions={{ fillColor: "red", color: "orange", weight: 10 }}
+          pathOptions={{ fillColor: "yellow", color: "orange", weight: 10 }}
           positions={positions}
         />
       )}
