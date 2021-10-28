@@ -30,10 +30,7 @@ export async function showGPX(gpx) {
   let parser = new DOMParser();
   let parsed = parser.parseFromString(result, "application/xml");
   let nodes = [...parsed.querySelectorAll("trkpt")];
-  let coords = nodes.map((node) => [
-    node.attributes.lat.value,
-    node.attributes.lon.value,
-  ]);
+  let coords = nodes.map((node) => [node.attributes.lat.value, node.attributes.lon.value]);
   console.log(coords);
   return coords;
 }
@@ -108,9 +105,9 @@ export async function getPoisByUser(user, isAdmin) {
 }
 
 export async function getAllPois() {
-  const events = await firebase.firestore().collection("pois");
+  const events = firebase.firestore().collection("pois");
   const tempDoc = [];
-  events.get().then((querySnapshot) => {
+  await events.get().then((querySnapshot) => {
     querySnapshot.forEach((doc) => {
       tempDoc.push({ id: doc.id, ...doc.data() });
     });

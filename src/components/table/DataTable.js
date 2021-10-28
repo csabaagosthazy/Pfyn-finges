@@ -6,6 +6,7 @@ import EditIcon from "@mui/icons-material/Edit";
 export default function DataTable({ data, deletePoi, editPoi }) {
   const [mapPoi, setMapPoi] = React.useState([]);
   const [selectionModel, setSelectionModel] = React.useState([]);
+  console.log(data);
   //rows and columns
   const handleDelete = React.useCallback(
     (id) => () => {

@@ -104,15 +104,16 @@ const AdminPage = () => {
 
   const PoisToDisplay = useCallback(async () => {
     let poisList = await getAllPois();
+    console.log(poisList);
     setPois(poisList);
-    console.log("Admin rendered");
   }, []);
 
   useEffect(() => {
+    console.log("Admin rendered");
     PoisToDisplay();
   }, []);
 
-  if (!pois) return <p>"Loading"</p>;
+  if (!pois || pois.length === 0) return <p>"Loading"</p>;
   else
     return (
       <>
@@ -127,7 +128,7 @@ const AdminPage = () => {
           </Modal.Body>
         </Modal>
         {/* <TableComp data={data} /> */}
-        <DataTable data={data} deletePoi={deletePoi} editPoi={editPoi} />
+        <DataTable data={pois} deletePoi={deletePoi} editPoi={editPoi} />
 
         {/*   {isOpen ? <AddPoi show={showModal} isOpen={isOpen} /> : null}*/}
         <MapView pois={pois} />
