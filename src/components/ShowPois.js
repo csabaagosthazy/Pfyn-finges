@@ -3,12 +3,11 @@ import { Icon } from "leaflet";
 import markerIconPng from "leaflet/dist/images/marker-icon.png";
 
 function ShowPois(props) {
-  console.log("Show rendered", props.pois);
   return (
-    <div>
-      {props.pois.map((poi, i) => (
+    <>
+      {props.pois.map((poi) => (
         <Marker
-          key={i}
+          key={poi.id}
           position={[poi.latitude, poi.longitude]}
           icon={new Icon({ iconUrl: markerIconPng, iconSize: [25, 41], iconAnchor: [12, 41] })}
         >
@@ -21,7 +20,7 @@ function ShowPois(props) {
           </Popup>
         </Marker>
       ))}
-    </div>
+    </>
   );
 }
 

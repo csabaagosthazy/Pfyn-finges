@@ -1,60 +1,47 @@
-import React, { Component } from "react";
-import { MapContainer, Polyline, TileLayer, Marker, Popup } from "react-leaflet";
+import React, { Component, useCallback, useEffect, useState } from "react";
+import { MapContainer, Polyline, TileLayer, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import L from "leaflet";
-delete L.Icon.Default.prototype._getIconUrl;
+import { showGPX } from "../services/dbService";
+import ShowPois from "./ShowPois";
 
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: require("leaflet/dist/images/marker-icon-2x.png"),
-  iconUrl: require("leaflet/dist/images/marker-icon.png"),
-  shadowUrl: require("leaflet/dist/images/marker-shadow.png"),
-});
+function MapView(props) {
+  let [currentLocation, setCurrentLocation] = useState({ lat: 46.294574, lng: 7.569767 });
+  let [zoom, setZoom] = useState(14);
+  let [positions, setPositions] = useState(null);
 
-class MapView extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      currentLocation: { lat: 46.294574, lng: 7.569767 },
-      zoom: 16,
-      positions: "",
-    };
-  }
-  /* 
-  componentDidMount() {
-    const defaultMarker = new L.icon({
-      iconUrl: "https://unpkg.com/leaflet@1.4.0/dist/images/marker-icon.png",
-      iconSize: [25, 41],
-      iconAnchor: [12, 41],
-    });
-    console.log(defaultMarker);
-    this.setState({ icon: defaultMarker });
-  } */
+  console.log("POI from admin is " + props.pois);
+  console.log("GPX from admin is " + props.gpx);
 
-  render() {
-    //const { currentLocation, zoom, positions } = this.state;
-    const { pois, positions, test } = this.props;
-    console.log("rendered");
-    return (
-      <MapContainer
-        center={test.currentLocation}
-        zoom={test.zoom}
-        style={{ height: "720px", width: "1280px" }}
-      >
-        <TileLayer url={test.url} />
+  useEffect(() => {
+    async function getPositions() {
+      let positions = await showGPX(props.gpx);
+      setPositions(positions);
+    }
+
+    getPositions();
+  }, [props.gpx]);
+
+  return (
+    <MapContainer center={currentLocation} zoom={zoom} style={{ height: "720px", width: "1280px" }}>
+      <TileLayer url="https://wmts20.geo.admin.ch/1.0.0/ch.swisstopo.pixelkarte-farbe/default/current/3857/{z}/{x}/{y}.jpeg" />
+      {positions && (
         <Polyline
-          pathOptions={{ fillColor: "red", color: "orange", weight: 6 }}
+          pathOptions={{ fillColor: "red", color: "orange", weight: 10 }}
           positions={positions}
         />
-        {pois.map((poi, i) => (
-          <Marker key={i} position={[poi.latitude, poi.longitude]}>
-            <Popup>
-              A pretty CSS3 popup. <br /> Easily customizable.
-            </Popup>
-          </Marker>
-        ))}
-      </MapContainer>
-    );
-  }
+      )}
+      {positions && (
+        <MapCenter position={positions.length > 0 && positions[Math.round(positions.length / 2)]} />
+      )}
+      {props.pois && <ShowPois pois={props.pois} />}
+    </MapContainer>
+  );
+}
+
+function MapCenter({ position }) {
+  const map = useMap();
+  map.panTo(position);
+  return null;
 }
 
 function ShowPois(props) {
