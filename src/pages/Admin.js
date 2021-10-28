@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/Auth2";
 import { firebase } from "../initFirebase";
 import { Form, Button, Modal, Table, InputGroup, Dropdown } from "react-bootstrap";
 import DataTable from "../components/table/DataTable";
@@ -17,7 +17,7 @@ const AdminPage = () => {
   const COLLECTION_POIS = "pois";
   const poisCollection = db.collection(COLLECTION_POIS);
 
-  const { currentUser, signOut, isAdmin } = useAuth();
+  const { user, signOut, isAdmin } = useAuth();
   const [show, setShow] = useState(false);
   const [error, setError] = useState("");
   const [data, setData] = useState([]);
