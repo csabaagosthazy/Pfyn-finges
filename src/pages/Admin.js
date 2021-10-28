@@ -1,12 +1,11 @@
-import { useState, useEffect } from "react";
-import { useAuth } from "../context/Auth2";
-
+import { useState, useEffect, useCallback } from "react";
+import { useAuth } from "../context/AuthContext";
 import { firebase } from "../initFirebase";
-
 import { Form, Button, Modal, Table, InputGroup, Dropdown } from "react-bootstrap";
 import DataTable from "../components/table/DataTable";
 import AddPoi from "../components/AddPoi";
 import MapView from "../components/MapView";
+import { getGPXAsString, getPoisByUser, getAllPois } from "../services/dbService";
 /*
 <Button variant="secondary" onClick={generateQR}>
 Generate QR Code
@@ -23,9 +22,21 @@ const AdminPage = () => {
   const [error, setError] = useState("");
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [pois, setPois] = useState();
 
   const handleShow = () => setShow(true);
   const handleClose = () => setShow(false);
+
+  /*  const GpxToDisplay = useCallback(async () => {
+    let poisList = await getPoisByUser(user, true);
+    setPois(poisList);
+  }, []);
+
+  useEffect(() => {
+    GpxToDisplay();
+  }, []);*/
+
+  console.log("POI for admin", pois);
 
   const deletePoi = (id) => {
     console.log(id);
@@ -35,7 +46,7 @@ const AdminPage = () => {
     console.log(id);
   };
 
-  const getAllPois = async () => {
+  /*  const getAllPois = async () => {
     const data = [
       {
         id: "x",
@@ -58,7 +69,7 @@ const AdminPage = () => {
     ];
 
     return data;
-  };
+  };*/
 
   const onSubmit = async (
     event,
@@ -91,33 +102,39 @@ const AdminPage = () => {
     if (!error) handleClose();
   };
 
-  useEffect(async () => {
+  const PoisToDisplay = useCallback(async () => {
+    let poisList = await getAllPois();
+    setPois(poisList);
     console.log("Admin rendered");
-    const pois = await getAllPois();
-    setData(pois);
   }, []);
 
-  if (data.length === 0) return <p>Loading</p>;
-  return (
-    <>
-      <h1>Welcome on admin page</h1>
-      <Button onClick={handleShow}>Create new POI</Button>
-      <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Creat new POI</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <TestForm onSubmit={onSubmit} />
-        </Modal.Body>
-      </Modal>
-      {/* <TableComp data={data} /> */}
-      <DataTable data={data} deletePoi={deletePoi} editPoi={editPoi} />
+  useEffect(() => {
+    PoisToDisplay();
+  }, []);
 
-      {/*   {isOpen ? <AddPoi show={showModal} isOpen={isOpen} /> : null}
-      <MapView /> */}
-      {/*{isOpen ? <AddPoi show={showModal} isOpen={isOpen} /> : null} <MapView user={user} />*/}
-    </>
-  );
+  if (!pois) return <p>"Loading"</p>;
+  else
+    return (
+      <>
+        <h1>Welcome on admin page {user?.email}</h1>
+        <Button onClick={handleShow}>Create new POI</Button>
+        <Modal show={show} onHide={handleClose}>
+          <Modal.Header closeButton>
+            <Modal.Title>Creat new POI</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <TestForm onSubmit={onSubmit} />
+          </Modal.Body>
+        </Modal>
+        {/* <TableComp data={data} /> */}
+        <DataTable data={data} deletePoi={deletePoi} editPoi={editPoi} />
+
+        {/*   {isOpen ? <AddPoi show={showModal} isOpen={isOpen} /> : null}*/}
+        <MapView pois={pois} />
+        {/*{isOpen ? <AddPoi show={showModal} isOpen={isOpen} /> : null} <MapView user={user} />*/}
+        <button onClick={() => signOut()}>Sign out</button>
+      </>
+    );
 };
 
 const TestForm = ({ onSubmit }) => {

@@ -16,7 +16,6 @@ const UserPage = () => {
     setgpx(history[history.length - 1]);
     let poisList = await getPoisByUser(currentUser, false);
     setPois(poisList);
-    console.log("POI for user", poisList);
   }, []);
 
   useEffect(() => {
