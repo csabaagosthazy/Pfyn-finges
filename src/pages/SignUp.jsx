@@ -1,39 +1,53 @@
-import { useState, useCallback, useRef } from "react";
-import { firebase } from "../initFirebase";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { useAuth } from "../context/Auth2";
+
 import { Link, useHistory } from "react-router-dom";
 import { Form, Button, Card, Alert } from "react-bootstrap";
-import {createUserData} from "../services/dbService";
+import { createUserData } from "../services/dbService";
 
 const SignUp = () => {
   const emailRef = useRef();
   const passwordRef = useRef();
   const passwordConfirmRef = useRef();
+  const { signup } = useAuth();
   const lastnameRef = useRef();
   const firstnameRef = useRef();
+  const isMounted = useRef(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const history = useHistory();
-  const handleSubmit = useCallback(async (e) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
 
-    firebase
-      .auth()
-      .createUserWithEmailAndPassword(emailRef.current.value, passwordRef.current.value)
-        .then((user) =>
-          createUserData(user, firstnameRef.current.value, lastnameRef.current.value))
-      .then((userCredential) => {
-        // Signed in
-        console.log(userCredential);
-        let user = userCredential.user;
-        console.log(user);
-        history.push("/successLogin");
-      })
-      .catch((error) => {
-        setError("Failed to create an account");
-      });
-  });
+  useEffect(() => {
+    // executed when component mounted
+    isMounted.current = true;
+    return () => {
+      // executed when unmount
+      isMounted.current = false;
+    };
+  }, []);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (passwordRef.current.value !== passwordConfirmRef.current.value) {
+      return setError("Passwords do not match");
+    }
+
+    try {
+      setError("");
+      setLoading(true);
+      let user = await signup(emailRef.current.value, passwordRef.current.value);
+      if (user) await createUserData(user, firstnameRef.current.value, lastnameRef.current.value);
+    } catch {
+      setError("Failed to create an account");
+    } finally {
+      if (isMounted.current) {
+        setLoading(false);
+        history.push("/");
+      }
+    }
+  };
+
   return (
     <>
       <Card>

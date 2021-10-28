@@ -1,28 +1,27 @@
 import React from "react";
 import { Route, Redirect } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/Auth2";
 
 export const AuthenticatedRoute = ({ component: C, ...props }) => {
-  const { isAuthenticated } = useAuth();
+  const { currentUser } = useAuth();
 
   return (
     <Route
       {...props}
-      render={(routeProps) => (isAuthenticated ? <C {...routeProps} /> : <Redirect to="/" />)}
+      render={(routeProps) => (currentUser ? <C {...routeProps} /> : <Redirect to="/" />)}
     />
   );
 };
 
 export const AuthenticatedAdminRoute = ({ component: C, ...props }) => {
-  const { isAuthenticated, isAdmin } = useAuth();
+  const { currentUser, isAdmin } = useAuth();
+  console.log(`/admin called, auth ${currentUser} admin ${isAdmin}`);
   return (
     <Route
       {...props}
-      render={(routeProps) => {
-        if (!isAuthenticated) return <Redirect to="/" />;
-        if (!isAdmin) return <Redirect to="/User" />;
-        return <C {...routeProps} />;
-      }}
+      render={(routeProps) =>
+        currentUser && isAdmin ? <C {...routeProps} /> : <Redirect to="/" />
+      }
     />
   );
 };
