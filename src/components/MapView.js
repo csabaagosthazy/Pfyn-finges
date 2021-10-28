@@ -1,15 +1,14 @@
 import React, { Component } from "react";
-import { MapContainer, Polyline, TileLayer } from "react-leaflet";
+import { MapContainer, Polyline, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import { showGPX } from "../services/dbService";
-//import ShowPois from "./ShowPois";
-import { useAuth } from "../context/AuthContext";
+import L from "leaflet";
+delete L.Icon.Default.prototype._getIconUrl;
 
-import { Marker, Popup } from "react-leaflet";
-import { Icon } from "leaflet";
-import markerIconPng from "leaflet/dist/images/marker-icon.png";
-
-//import favicon from "../../public/";
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: require("leaflet/dist/images/marker-icon-2x.png"),
+  iconUrl: require("leaflet/dist/images/marker-icon.png"),
+  shadowUrl: require("leaflet/dist/images/marker-shadow.png"),
+});
 
 class MapView extends Component {
   constructor(props) {
@@ -22,8 +21,13 @@ class MapView extends Component {
   }
   /* 
   componentDidMount() {
-    showGPX().then((positions) => this.setState({ positions }));
-    //console.log(positions);
+    const defaultMarker = new L.icon({
+      iconUrl: "https://unpkg.com/leaflet@1.4.0/dist/images/marker-icon.png",
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+    });
+    console.log(defaultMarker);
+    this.setState({ icon: defaultMarker });
   } */
 
   render() {
@@ -36,17 +40,17 @@ class MapView extends Component {
         zoom={test.zoom}
         style={{ height: "720px", width: "1280px" }}
       >
-        <TileLayer url="https://wmts20.geo.admin.ch/1.0.0/ch.swisstopo.pixelkarte-farbe/default/current/3857/{z}/{x}/{y}.jpeg" />
+        <TileLayer url={test.url} />
         <Polyline
           pathOptions={{ fillColor: "red", color: "orange", weight: 6 }}
           positions={positions}
         />
         {pois.map((poi, i) => (
-          <Marker
-            key={i}
-            position={[poi.latitude, poi.longitude]}
-            icon="pfyn-finges-template\public\favicon.ico"
-          />
+          <Marker key={i} position={[poi.latitude, poi.longitude]}>
+            <Popup>
+              A pretty CSS3 popup. <br /> Easily customizable.
+            </Popup>
+          </Marker>
         ))}
       </MapContainer>
     );
@@ -58,11 +62,7 @@ function ShowPois(props) {
   return (
     <div>
       {props.pois.map((poi, i) => (
-        <Marker
-          key={i}
-          position={[poi.latitude, poi.longitude]}
-          icon={new Icon({ iconUrl: markerIconPng, iconSize: [25, 41], iconAnchor: [12, 41] })}
-        >
+        <Marker key={i} position={[poi.latitude, poi.longitude]}>
           <Popup>
             {poi.title}
             <br />

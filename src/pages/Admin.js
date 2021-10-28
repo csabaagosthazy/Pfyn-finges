@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import { firebase } from "../initFirebase";
 
 import { Form, Button, Modal, Table, InputGroup, Dropdown } from "react-bootstrap";
+import DataTable from "../components/table/DataTable";
 import AddPoi from "../components/AddPoi";
 import MapView from "../components/MapView";
 /* 
@@ -25,6 +26,14 @@ const AdminPage = () => {
 
   const handleShow = () => setShow(true);
   const handleClose = () => setShow(false);
+
+  const deletePoi = (id) => {
+    console.log(id);
+  };
+
+  const editPoi = (id) => {
+    console.log(id);
+  };
 
   const getAllPois = async () => {
     const data = [
@@ -88,6 +97,7 @@ const AdminPage = () => {
     setData(pois);
   }, []);
 
+  if (data.length === 0) return <p>Loading</p>;
   return (
     <>
       <h1>Welcome on admin page {user?.email}</h1>
@@ -100,11 +110,12 @@ const AdminPage = () => {
           <TestForm onSubmit={onSubmit} />
         </Modal.Body>
       </Modal>
-      <TableComp data={data} />
+      {/* <TableComp data={data} /> */}
+      <DataTable data={data} deletePoi={deletePoi} editPoi={editPoi} />
 
       {/*   {isOpen ? <AddPoi show={showModal} isOpen={isOpen} /> : null}
       <MapView /> */}
-      {/*{isOpen ? <AddPoi show={showModal} isOpen={isOpen} /> : null}*/ <MapView user={user} />}
+      {/*{isOpen ? <AddPoi show={showModal} isOpen={isOpen} /> : null} <MapView user={user} />*/}
       <button onClick={() => signOut()}>Sign out</button>
     </>
   );
@@ -130,14 +141,14 @@ const TestForm = ({ onSubmit }) => {
 
     if (form.checkValidity()) {
       e.preventDefault();
-      onSubmit(e, title, latitude, longitude, description, inputWebsite);
+      onSubmit(e, title, latitude, longitude, description, inputWebsite, isActive);
     }
   };
 
   return (
     <div>
       <Form noValidate validated={validated} onSubmit={handleSubmit}>
-        <Form.Group controlId="title">
+        <Form.Group controlId="title" style={style.fromGroup}>
           <Form.Label>POI title: </Form.Label>
           <Form.Control
             type="text"
@@ -147,54 +158,57 @@ const TestForm = ({ onSubmit }) => {
             required
           />
         </Form.Group>
-        <Form.Group controlId="Latitude">
+        <Form.Group controlId="Latitude" style={style.fromGroup}>
           <Form.Label>Latitude</Form.Label>
           <Form.Control
-            type="text"
+            type="number"
             onChange={(e) => setLatitude(e.target.value)}
             value={latitude}
             placeholder="Latitude"
             required
+            min={"-90"}
+            max={"90"}
           />
         </Form.Group>
-        <Form.Group controlId="Longitude">
+        <Form.Group controlId="Longitude" style={style.fromGroup}>
           <Form.Label>Longitude</Form.Label>
           <Form.Control
-            type="text"
+            type="number"
             onChange={(e) => setLongitude(e.target.value)}
             value={longitude}
             placeholder="Longitude"
             required
+            min={"-180"}
+            max={"80"}
           />
         </Form.Group>
-        <Form.Group controlId="Description">
+        <Form.Group controlId="Description" style={style.fromGroup}>
           <Form.Label>Description</Form.Label>
           <Form.Control
-            type="text"
+            as="textarea"
+            rows={3}
             onChange={(e) => setDescription(e.target.value)}
             value={description}
             placeholder="Description"
             required
           />
         </Form.Group>
-        <Form.Group controlId="Website">
+        <Form.Group controlId="Website" style={style.fromGroup}>
           <Form.Label>Website</Form.Label>
           <Form.Control
-            type="text"
+            type="url"
             onChange={(e) => setInputWebsite(e.target.value)}
             value={inputWebsite}
-            placeholder="Website url"
+            placeholder="https://www.something.com"
             required
           />
         </Form.Group>
-        <Form.Group controlId="Website">
-          <Form.Label>Active</Form.Label>
-          <Form.Control
-            type="text"
-            onChange={(e) => setIsActive(e.target.value)}
-            value={isActive}
-            placeholder="Is poi active"
-            required
+        <Form.Group className="mb-3" controlId="activeCheck" style={style.fromGroup}>
+          <Form.Check
+            type="checkbox"
+            label="Activate POI"
+            checked={isActive}
+            onChange={() => setIsActive(!isActive)}
           />
         </Form.Group>
         <Button style={{ margin: 10 }} variant="primary" type="submit">
@@ -222,7 +236,7 @@ const TableComp = ({ data }) => {
   return data.length > 0 ? (
     <div>
       <p>List of POI</p>
-      <Table striped bordered hover>
+      <Table striped bordered hover responsive="sm">
         <thead>
           <tr>
             {headers.map((head, i) => (
@@ -263,3 +277,9 @@ const TableComp = ({ data }) => {
 };
 
 export default AdminPage;
+
+const style = {
+  fromGroup: {
+    margin: 10,
+  },
+};
