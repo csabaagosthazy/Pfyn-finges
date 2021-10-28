@@ -96,24 +96,25 @@ export async function getUserParams(user) {
 
 export async function getPoisByUser(user, isAdmin) {
   let pois = [];
-  if (isAdmin) {
+  let myuser = await getUserParams(user);
+  let poisToShow = myuser.pois;
+  for (let poi in poisToShow) {
     db.collection("pois")
+      .doc(poisToShow[poi])
       .get()
-      .then((item) => {
-        pois = item.docs.map((doc) => doc.data());
-        console.log("POI FOR ", isAdmin, " are ", pois);
-        return pois;
-      });
-  } else {
-    let myuser = await getUserParams(user);
-    let poisToShow = myuser.pois;
-    for (let poi in poisToShow) {
-      db.collection("pois")
-        .doc(poisToShow[poi])
-        .get()
-        .then((poi) => pois.push({ id: poi.id, ...poi.data() }));
-    }
-    console.log("POI FOR ", isAdmin, " are ", pois);
-    return pois;
+      .then((poi) => pois.push({ id: poi.id, ...poi.data() }));
   }
+  return pois;
+}
+
+export async function getAllPois() {
+  const events = await firebase.firestore().collection("pois");
+  const tempDoc = [];
+  events.get().then((querySnapshot) => {
+    querySnapshot.forEach((doc) => {
+      tempDoc.push({ id: doc.id, ...doc.data() });
+    });
+    console.log(tempDoc);
+  });
+  return tempDoc;
 }
