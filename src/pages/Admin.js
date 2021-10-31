@@ -1,11 +1,21 @@
 import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "../context/Auth2";
 import { firebase } from "../initFirebase";
-import { Form, Button, Modal, Table, InputGroup, Dropdown } from "react-bootstrap";
+import {
+  Form,
+  Button,
+  Modal,
+  Table,
+  InputGroup,
+  Dropdown,
+} from "react-bootstrap";
 import DataTable from "../components/table/DataTable";
-import AddPoi from "../components/AddPoi";
 import MapView from "../components/MapView";
-import { getGPXAsString, getPoisByUser, getAllPois } from "../services/dbService";
+import {
+  getGPXAsString,
+  getPoisByUser,
+  getAllPois,
+} from "../services/dbService";
 /*
 <Button variant="secondary" onClick={generateQR}>
 Generate QR Code
@@ -158,7 +168,15 @@ const TestForm = ({ onSubmit }) => {
 
     if (form.checkValidity()) {
       e.preventDefault();
-      onSubmit(e, title, latitude, longitude, description, inputWebsite, isActive);
+      onSubmit(
+        e,
+        title,
+        latitude,
+        longitude,
+        description,
+        inputWebsite,
+        isActive
+      );
     }
   };
 
@@ -220,7 +238,11 @@ const TestForm = ({ onSubmit }) => {
             required
           />
         </Form.Group>
-        <Form.Group className="mb-3" controlId="activeCheck" style={style.fromGroup}>
+        <Form.Group
+          className="mb-3"
+          controlId="activeCheck"
+          style={style.fromGroup}
+        >
           <Form.Check
             type="checkbox"
             label="Activate POI"
@@ -265,20 +287,27 @@ const TableComp = ({ data }) => {
           {data.map((item) => (
             <tr key={item.id}>
               <td>
-                <InputGroup.Checkbox name={item.id} onChange={handleSelectRow} />
+                <InputGroup.Checkbox
+                  name={item.id}
+                  onChange={handleSelectRow}
+                />
               </td>
               <td>{item.title}</td>
               <td>{item.latitude}</td>
               <td>{item.longitude}</td>
               <td>{item.inputWebsite}</td>
               <td>
-                <Dropdown onSelect={(eventKey) => handleSelectAction(eventKey, item.id)}>
+                <Dropdown
+                  onSelect={(eventKey) => handleSelectAction(eventKey, item.id)}
+                >
                   <Dropdown.Toggle variant="primary" id="action-dropdown">
                     Actions
                   </Dropdown.Toggle>
                   <Dropdown.Menu>
                     <Dropdown.Item eventKey="update">Update</Dropdown.Item>
-                    <Dropdown.Item eventKey="deactivate">Deactivate</Dropdown.Item>
+                    <Dropdown.Item eventKey="deactivate">
+                      Deactivate
+                    </Dropdown.Item>
                     <Dropdown.Item eventKey="showqr">Show QR</Dropdown.Item>
                   </Dropdown.Menu>
                 </Dropdown>

@@ -1,6 +1,4 @@
 import { firebase } from "../initFirebase";
-import { forEach } from "lodash/fp/_util";
-import { signOut } from "firebase/auth";
 
 const db = firebase.firestore();
 
@@ -30,7 +28,10 @@ export async function showGPX(gpx) {
   let parser = new DOMParser();
   let parsed = parser.parseFromString(result, "application/xml");
   let nodes = [...parsed.querySelectorAll("trkpt")];
-  let coords = nodes.map((node) => [node.attributes.lat.value, node.attributes.lon.value]);
+  let coords = nodes.map((node) => [
+    node.attributes.lat.value,
+    node.attributes.lon.value,
+  ]);
   console.log(coords);
   return coords;
 }

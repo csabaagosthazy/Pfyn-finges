@@ -1,5 +1,5 @@
 import { useAuth } from "../context/Auth2";
-import { getGPXAsString, getPoisByUser, getUserParams } from "../services/dbService";
+import { getGPXAsString, getPoisByUser } from "../services/dbService";
 import MapView from "../components/MapView";
 import { useCallback, useEffect, useState } from "react";
 import { Dropdown } from "react-bootstrap";
@@ -43,7 +43,11 @@ const UserPage = () => {
 
           <Dropdown.Menu>
             {gpxHistory.map((jesus, index) => (
-              <Dropdown.Item name={jesus} onClick={(event) => handleClick(event)} key={index}>
+              <Dropdown.Item
+                name={jesus}
+                onClick={(event) => handleClick(event)}
+                key={index}
+              >
                 {jesus}
               </Dropdown.Item>
             ))}

@@ -3,7 +3,7 @@ import { firebase } from "../initFirebase";
 
 import { Form, Button, Modal, Alert } from "react-bootstrap";
 
-const CreatePOIForm = ({ isOpen, show }) => {
+const AddPoi = ({ isOpen, show }) => {
   const db = firebase.firestore();
   const COLLECTION_POIS = "pois";
   const poisCollection = db.collection(COLLECTION_POIS);
@@ -135,4 +135,4 @@ const CreatePOIForm = ({ isOpen, show }) => {
   );
 };
 
-export default CreatePOIForm;
+export default AddPoi;
