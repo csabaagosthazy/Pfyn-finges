@@ -6,11 +6,12 @@ import Navbar from "react-bootstrap/Navbar";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import { Dropdown } from "react-bootstrap";
-import { languagesList } from "../context/LanguageContext";
+import {languagesList, useLang} from "../context/LanguageContext";
 
 export const Navigation = (props) => {
   //auth user and role needed
   const { currentUser, logout, isAdmin } = useAuth();
+  const {changeLanguage} = useLang();
   console.log("navbar");
   return (
     <Navbar bg="dark" variant="dark">
@@ -42,9 +43,9 @@ export const Navigation = (props) => {
             Choose your language
           </Dropdown.Toggle>
           <Dropdown.Menu>
-            {languagesList.map(({ code, name }) => (
-              <Dropdown.Item key={code}>
-                <span className={`flag-icon flag-icon-${code} mx-2`} />
+            {languagesList.map(({ code, name, country_code }) => (
+              <Dropdown.Item key={code} onClick={() => changeLanguage(code)}>
+                <span className={`flag-icon flag-icon-${country_code} mx-2`} />
                 {name}
               </Dropdown.Item>
             ))}
