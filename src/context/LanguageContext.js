@@ -1,8 +1,7 @@
 import React, {useContext, useEffect, useState} from 'react';
 
 export const LanguageContext = React.createContext({
-    language: 'en',
-    changeLanguage: null
+    language: 'en'
 });
 
 export const languages = {
@@ -27,29 +26,25 @@ export const languages = {
 export const languagesList = [
     {
         code: 'en',
-        name: 'English'
+        name: 'English',
+        country_code: 'gb'
+    },
+    {
+        code: 'fr',
+        name: 'Français',
+        country_code: 'fr'
     }
 ];
 
 export const LanguageProvider = ({children}) => {
     const [language, setLanguage] = useState('en');
 
-    const changeLanguageEnglish = () => {
-        setLanguage('en');
+    const changeLanguage = (language) => {
+        setLanguage(language);
     }
-
-    const changeLanguageFrench = () => {
-        setLanguage('fr');
-    }
-
-    useEffect((prevLanguage) => {
-        if (language !== prevLanguage) {
-            localStorage.setItem("language", language);
-        }
-    });
 
     return (
-        <LanguageContext.Provider value={{language, changeLanguageEnglish, changeLanguageFrench}}>
+        <LanguageContext.Provider value={{languages, language, changeLanguage}}>
             {children}
         </LanguageContext.Provider>
     )
