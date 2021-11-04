@@ -6,10 +6,10 @@ import Navbar from "react-bootstrap/Navbar";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import { Dropdown } from "react-bootstrap";
-import {languagesList, useLang} from "../context/LanguageContext";
+import { languagesList } from "../context/LanguageContext";
 
 export const Navigation = (props) => {
-  const {changeLanguage} = useLang();
+  //auth user and role needed
   const { currentUser, logout, isAdmin } = useAuth();
   console.log("navbar");
   return (
@@ -18,7 +18,7 @@ export const Navigation = (props) => {
           <Navbar.Brand href="/">Navbar</Navbar.Brand>
           <Nav defaultActiveKey="/home" as="ul">
             <Nav.Item as="li">
-              <Nav.Link href={isAdmin ? "/admin" : "/user"}>Active</Nav.Link>
+              <Nav.Link href={isAdmin ? "/admin" : "/user"}>Account</Nav.Link>
             </Nav.Item>
           </Nav>
           <Nav className="justify-content-end" activeKey="/home">
@@ -42,9 +42,9 @@ export const Navigation = (props) => {
               Choose your language
             </Dropdown.Toggle>
             <Dropdown.Menu>
-              {languagesList.map(({ code, name , country_code}) => (
-                  <Dropdown.Item key={code} onClick={() => changeLanguage(code)}>
-                    <span className={`flag-icon flag-icon-${country_code} mx-2`} />
+              {languagesList.map(({ code, name }) => (
+                  <Dropdown.Item key={code}>
+                    <span className={`flag-icon flag-icon-${code} mx-2`} />
                     {name}
                   </Dropdown.Item>
               ))}
