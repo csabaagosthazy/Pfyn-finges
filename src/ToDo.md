@@ -9,12 +9,12 @@ Just one person edit this file, otherwise we'll have each time merge conflict on
   * Add a button to generate Qr Code in each table line 
 * Bastien
   * Create a web page with multi-media content (Wix Website)
+  * Add rules on firebase
+    * https://firebase.google.com/docs/firestore/security/rules-structure
+    * https://firebase.google.com/docs/auth/admin/custom-claims
 * Paulo
   * Multi-language support for visitor and admin
     * See Roger comments about languageContext in the Word file
-  * Add rules on firebase 
-    * https://firebase.google.com/docs/firestore/security/rules-structure
-    * https://firebase.google.com/docs/auth/admin/custom-claims
   
 * Free to take
   * User guide
