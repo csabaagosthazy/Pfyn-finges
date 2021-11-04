@@ -8,19 +8,23 @@ export const AuthenticatedRoute = ({ component: C, ...props }) => {
   return (
     <Route
       {...props}
-      render={(routeProps) => (currentUser ? <C {...routeProps} /> : <Redirect to="/" />)}
+      render={(routeProps) =>
+        currentUser ? <C {...routeProps} /> : <Redirect to="/" />
+      }
     />
   );
 };
 
 export const AuthenticatedAdminRoute = ({ component: C, ...props }) => {
-  const { currentUser, isAdmin } = useAuth();
-  console.log(`/admin called, auth ${currentUser} admin ${isAdmin}`);
+  const { currentUser, checkAdmin } = useAuth();
+  console.log(
+    `/admin called, auth ${currentUser} admin ${checkAdmin(currentUser, false)}`
+  );
   return (
     <Route
       {...props}
       render={(routeProps) =>
-        currentUser && isAdmin ? <C {...routeProps} /> : <Redirect to="/" />
+        currentUser && checkAdmin ? <C {...routeProps} /> : <Redirect to="/" />
       }
     />
   );
