@@ -103,6 +103,7 @@ const AdminPage = () => {
         inputWebsite,
         isActive,
       });
+      PoisToDisplay();
     } catch (e) {
       console.error(e);
       setError("Could not add new POI");
