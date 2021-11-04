@@ -198,6 +198,7 @@ const TestForm = ({ onSubmit }) => {
           <Form.Label>Latitude</Form.Label>
           <Form.Control
             type="number"
+            step="0.0000001"
             onChange={(e) => setLatitude(e.target.value)}
             value={latitude}
             placeholder="Latitude"
@@ -210,6 +211,7 @@ const TestForm = ({ onSubmit }) => {
           <Form.Label>Longitude</Form.Label>
           <Form.Control
             type="number"
+            step="0.0000001"
             onChange={(e) => setLongitude(e.target.value)}
             value={longitude}
             placeholder="Longitude"
