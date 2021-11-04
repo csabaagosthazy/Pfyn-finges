@@ -6,7 +6,8 @@ Just one person edit this file, otherwise we'll have each time merge conflict on
 * Csaba
   * in “SignUp”, all the form fields are uncontrolled components using “refs”. This is usually not the way it’s done in React and it is not really recommended according to the official documentation : https://reactjs.org/docs/uncontrolled-components.html. Consider changing these form fields into controlled components (you can use a similar approach as for adding books in the exercises, or look at a library such as Formik to reduce boilerplate code).
   * Deleting, modifying POI from table (Baptiste will do the dbService method to modify, setInactive)
-  * Add a button to generate Qr Code in each table line 
+  * Add a button to generate Qr Code in each table line
+  * When connected as an admin, we can't go back to admin page from the home page (we are still connected), but as a user it works (we can navigate from home page to user page with the navbar "account" button)
 * Bastien
   * Create a web page with multi-media content (Wix Website)
   * Add rules on firebase
@@ -20,3 +21,4 @@ Just one person edit this file, otherwise we'll have each time merge conflict on
   * User guide
   * Technical guide
   * List of competencies through screen copies (on the XLS file on teams)
+
