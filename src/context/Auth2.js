@@ -15,11 +15,12 @@ export function AuthProvider({ children }) {
   async function checkAdmin(user, login) {
     console.log("checkAdmin");
     if (user) {
-      return firebase
+      return await firebase
         .auth()
         .currentUser.getIdTokenResult()
         .then((res) => {
           // Get the ID token which contains the "custom claims" to know about the admin status of the user
+          console.log(res);
           if (!!res.claims.admin) {
             if (!login) setIsAdmin(true);
             else return true;
@@ -55,9 +56,9 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     console.log("Auth use func");
 
-    const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
+    const unsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
       console.log("Auth changed");
-      checkAdmin(user, false);
+      await checkAdmin(user, false);
       setCurrentUser(user);
       setLoading(false);
     });
@@ -77,9 +78,5 @@ export function AuthProvider({ children }) {
     updatePassword,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {!loading && children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{!loading && children}</AuthContext.Provider>;
 }
