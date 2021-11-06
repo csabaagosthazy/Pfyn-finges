@@ -2,9 +2,11 @@ import { useState, useEffect, useRef } from "react";
 import { useAuth } from "../context/Auth2";
 
 import { Form, Button, Card, Alert } from "react-bootstrap";
-import { Link, useHistory, Redirect } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 
 const Login = () => {
+  const [email, setEmail] = useState();
+  const [password, setPassword] = useState();
   const emailRef = useRef();
   const passwordRef = useRef();
   const isMounted = useRef(null);
@@ -29,7 +31,7 @@ const Login = () => {
     let user;
     let isAdmin;
     try {
-      user = await login(emailRef.current.value, passwordRef.current.value);
+      user = await login(email, password);
       isAdmin = await checkAdmin(user, true);
     } catch {
       setError("Failed to log in");
@@ -61,11 +63,15 @@ const Login = () => {
           <Form onSubmit={handleSubmit}>
             <Form.Group id="email">
               <Form.Label>Email</Form.Label>
-              <Form.Control type="email" ref={emailRef} required />
+              <Form.Control type="email" onChange={(e) => setEmail(e.target.value)} required />
             </Form.Group>
             <Form.Group id="password">
               <Form.Label>Password</Form.Label>
-              <Form.Control type="password" ref={passwordRef} required />
+              <Form.Control
+                type="password"
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
             </Form.Group>
             <Button disabled={loading} className="w-100" type="submit">
               Log In
