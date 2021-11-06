@@ -28,10 +28,7 @@ export async function showGPX(gpx) {
   let parser = new DOMParser();
   let parsed = parser.parseFromString(result, "application/xml");
   let nodes = [...parsed.querySelectorAll("trkpt")];
-  let coords = nodes.map((node) => [
-    node.attributes.lat.value,
-    node.attributes.lon.value,
-  ]);
+  let coords = nodes.map((node) => [node.attributes.lat.value, node.attributes.lon.value]);
   console.log(coords);
   return coords;
 }
@@ -115,4 +112,27 @@ export async function getAllPois() {
     console.log(tempDoc);
   });
   return tempDoc;
+}
+
+export async function updatePoi(id, fields) {
+  //this method try to find a document with a given id and modify it.
+  //if the doc doesn't exist it will return "not found"
+  let result = { err: "", message: "" };
+  const poiRef = firebase.firestore().collection("pois").doc(id);
+  const found = await poiRef.get().then((doc) => doc.exists);
+
+  if (found) {
+    const data = await poiRef.get().then((doc) => doc.data());
+    const modifiedData = { ...data, ...fields };
+    await poiRef
+      .set({
+        ...modifiedData,
+      })
+      .then((result = { err: "", message: "Document successfully written!" }))
+      .catch((err) => (result = { err: "Document couldn't be modified!", message: err }));
+  } else {
+    result = { err: "Not found", message: `Document with id ${id} not found!` };
+  }
+
+  return result;
 }
