@@ -1,17 +1,25 @@
 import * as React from "react";
 import { DataGrid, GridActionsCellItem } from "@mui/x-data-grid";
-import DeleteIcon from "@mui/icons-material/Delete";
+import CheckIcon from "@mui/icons-material/Check";
+import BlockIcon from "@mui/icons-material/Block";
 import EditIcon from "@mui/icons-material/Edit";
+import QrCodeIcon from "@mui/icons-material/QrCode";
 
-export default function DataTable({ data, deletePoi, editPoi }) {
-  const [mapPoi, setMapPoi] = React.useState([]);
+export default function DataTable({
+  data,
+  changePoiActivity,
+  editPoi,
+  showQr,
+  setMapPoi,
+  fullFunctions,
+}) {
   const [selectionModel, setSelectionModel] = React.useState([]);
   console.log(data);
   //rows and columns
-  const handleDelete = React.useCallback(
-    (id) => () => {
+  const handleActivate = React.useCallback(
+    (id, isActive) => () => {
       setTimeout(() => {
-        deletePoi(id);
+        changePoiActivity(id, isActive);
       });
     },
     []
@@ -26,6 +34,14 @@ export default function DataTable({ data, deletePoi, editPoi }) {
     []
   );
 
+  const handleQr = React.useCallback(
+    (inputWebsite) => () => {
+      setTimeout(() => {
+        showQr(inputWebsite);
+      });
+    },
+    []
+  );
   const handleSelect = (newSelectionModel) => {
     console.log(newSelectionModel);
 
@@ -39,48 +55,70 @@ export default function DataTable({ data, deletePoi, editPoi }) {
 
   const columns = React.useMemo(
     () => [
-      { field: "title", headerName: "Title", minWidth: 120 },
-      { field: "latitude", headerName: "Latitude", minWidth: 130 },
-      { field: "longitude", headerName: "Longitude", minWidth: 150 },
+      { field: "title", headerName: "Title", flex: 0.15, minWidth: 100 },
+      { field: "latitude", headerName: "Latitude", flex: 0.1, minWidth: 100 },
+      { field: "longitude", headerName: "Longitude", flex: 0.1, minWidth: 100 },
       {
         field: "description",
         headerName: "Description",
         sortable: false,
-        minWidth: 160,
-        valueGetter: (params) =>
-          `${params.getValue(params.id, "title") || ""} ${
-            params.getValue(params.id, "inputWebsite") || ""
-          }`,
+        flex: 0.2,
+        minWidth: 100,
       },
-      { field: "inputWebsite", headerName: "Website", minWidth: 130 },
+      { field: "inputWebsite", headerName: "Website", flex: 0.2, minWidth: 100 },
       {
         field: "isActive",
         headerName: "Avtive POI",
-        minWidth: 150,
+        flex: 0.1,
+        minWidth: 50,
       },
       {
         field: "actions",
         type: "actions",
-        width: 80,
+        flex: 0.1,
+        minWidth: 100,
         getActions: (params) => [
+          fullFunctions ? (
+            <div>
+              <GridActionsCellItem
+                icon={<EditIcon />}
+                label="Edit"
+                onClick={handleEdit(params.id)}
+              />
+              {params.row.isActive ? (
+                <GridActionsCellItem
+                  icon={<BlockIcon />}
+                  label="Activate"
+                  onClick={handleActivate(params.id, params.row.isActive)}
+                />
+              ) : (
+                <GridActionsCellItem
+                  icon={<CheckIcon />}
+                  label="Activate"
+                  onClick={handleActivate(params.id)}
+                />
+              )}
+            </div>
+          ) : (
+            <div></div>
+          ),
           <GridActionsCellItem
-            icon={<DeleteIcon />}
-            label="Delete"
-            onClick={handleDelete(params.id)}
+            icon={<QrCodeIcon />}
+            label="Qr"
+            onClick={handleQr(params.row.inputWebsite)}
           />,
-          <GridActionsCellItem icon={<EditIcon />} label="Edit" onClick={handleEdit(params.id)} />,
         ],
       },
     ],
-    [handleDelete, handleEdit]
+    [handleActivate, handleEdit, handleQr]
   );
 
   return (
-    <div style={{ height: 400, width: "80%", margin: 10 }}>
+    <div style={{ height: 350, width: "80%", backgroundColor: "white" }}>
       <DataGrid
         rows={data}
         columns={columns}
-        pageSize={10}
+        pageSize={5}
         rowsPerPageOptions={[5]}
         checkboxSelection
         disableSelectionOnClick

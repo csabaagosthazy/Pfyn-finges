@@ -12,9 +12,6 @@ function MapView(props) {
   let [zoom, setZoom] = useState(14);
   let [positions, setPositions] = useState(null);
 
-  console.log("MAPVIEW POIS", props.pois);
-  console.log("MAPVIEW POSITION", positions);
-
   useEffect(() => {
     async function getPositions() {
       if (props.gpx) {
@@ -27,11 +24,7 @@ function MapView(props) {
   }, [props.gpx]);
 
   return (
-    <MapContainer
-      center={currentLocation}
-      zoom={zoom}
-      style={{ height: "720px", width: "1280px" }}
-    >
+    <MapContainer center={currentLocation} zoom={zoom} style={{ height: "720px", width: "1280px" }}>
       <TileLayer url="https://wmts20.geo.admin.ch/1.0.0/ch.swisstopo.pixelkarte-farbe/default/current/3857/{z}/{x}/{y}.jpeg" />
       {positions && (
         <Polyline
@@ -40,11 +33,7 @@ function MapView(props) {
         />
       )}
       {positions && (
-        <MapCenter
-          position={
-            positions.length > 0 && positions[Math.round(positions.length / 2)]
-          }
-        />
+        <MapCenter position={positions.length > 0 && positions[Math.round(positions.length / 2)]} />
       )}
       {props.pois && <ShowPois pois={props.pois} />}
     </MapContainer>
