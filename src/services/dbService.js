@@ -4,8 +4,6 @@ const db = firebase.firestore();
 
 /* The road parameter has to be an XML string */
 export async function showGPX(gpx) {
-  console.log("gpxToshow", gpx);
-
   var gpxFile = db.collection("gpx").doc(gpx);
   let gpxToShow;
   await gpxFile
@@ -13,7 +11,7 @@ export async function showGPX(gpx) {
     .then((doc) => {
       if (doc.exists) {
         gpxToShow = doc.data().file;
-        console.log("Document data:", gpxToShow);
+        //console.log("Document data:", gpxToShow);
       } else {
         console.log("no such document !");
       }
@@ -29,7 +27,6 @@ export async function showGPX(gpx) {
   let parsed = parser.parseFromString(result, "application/xml");
   let nodes = [...parsed.querySelectorAll("trkpt")];
   let coords = nodes.map((node) => [node.attributes.lat.value, node.attributes.lon.value]);
-  console.log(coords);
   return coords;
 }
 
@@ -93,17 +90,20 @@ export async function getPoisByUser(user, isAdmin) {
   let pois = [];
   let myuser = await getUserParams(user);
   let poisToShow = myuser.pois;
+  console.log(poisToShow);
   for (let poi in poisToShow) {
-    db.collection("pois")
-      .doc(poisToShow[poi])
-      .get()
-      .then((poi) => pois.push({ id: poi.id, ...poi.data() }));
+    const poiRef = db.collection("pois").doc(poisToShow[poi]);
+    const found = await poiRef.get().then((doc) => doc.exists);
+    if (found) {
+      await poiRef.get().then((doc) => pois.push({ id: doc.id, ...doc.data() }));
+    }
   }
+
   return pois;
 }
 
 export async function getAllPois() {
-  const events = firebase.firestore().collection("pois");
+  const events = db.collection("pois");
   const tempDoc = [];
   await events.get().then((querySnapshot) => {
     querySnapshot.forEach((doc) => {
@@ -118,7 +118,7 @@ export async function updatePoi(id, fields) {
   //this method try to find a document with a given id and modify it.
   //if the doc doesn't exist it will return "not found"
   let result = { err: "", message: "" };
-  const poiRef = firebase.firestore().collection("pois").doc(id);
+  const poiRef = db.collection("pois").doc(id);
   const found = await poiRef.get().then((doc) => doc.exists);
 
   if (found) {
@@ -134,5 +134,15 @@ export async function updatePoi(id, fields) {
     result = { err: "Not found", message: `Document with id ${id} not found!` };
   }
 
+  return result;
+}
+
+export async function addPoi(fields) {
+  let result = { err: "", message: "" };
+  const dbCollection = db.collection("pois");
+  await dbCollection
+    .add({ ...fields })
+    .then((result = { err: "", message: "Document successfully written!" }))
+    .catch((err) => (result = { err: "Document couldn't be saved!", message: err }));
   return result;
 }

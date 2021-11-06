@@ -1,35 +1,25 @@
 import { useState, useEffect, useCallback } from "react";
-import { firebase } from "../initFirebase";
-import { Button, Toast, Container, Col, Row } from "react-bootstrap";
+import { Button, Container, Col, Row, Spinner } from "react-bootstrap";
 import PopUpModal from "../components/modal/PopUpModal";
 import DataTable from "../components/table/DataTable";
 import PoiForm from "../components/form/PoiForm";
 import MapView from "../components/MapView";
 import QrCodeHandler from "../components/qrcode/QrCodeHandler";
-import { getAllPois, updatePoi } from "../services/dbService";
+import InfoToast from "../components/toast/InfoToast";
+import { getAllPois, updatePoi, addPoi } from "../services/dbService";
 
-/*
-<Button variant="secondary" onClick={generateQR}>
-Generate QR Code
-</Button>
-<QRCode value={qrCode} /> */
-//
 const AdminPage = () => {
-  const db = firebase.firestore();
-  const COLLECTION_POIS = "pois";
-  const poisCollection = db.collection(COLLECTION_POIS);
-
   const [showNew, setShowNew] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
   const [showQrModal, setShowQrModal] = useState(false);
   const [showToast, setShowToast] = useState(false);
 
-  const [error, setError] = useState("");
   const [mapData, setMapData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [pois, setPois] = useState();
   const [poiToEdit, setPoiToEdit] = useState(null);
   const [qrRef, setQrRef] = useState();
+  const [toastProp, setToastProp] = useState({ message: "", type: "" });
 
   const handleShowNew = () => setShowNew(true);
   const handleCloseNew = () => setShowNew(false);
@@ -45,9 +35,14 @@ const AdminPage = () => {
     console.log(id, isActive);
     const fields = { isActive: !isActive };
     const result = await updatePoi(id, fields);
-    console.log(result);
     PoisToDisplay();
     setLoading(false);
+    if (!result.err) {
+      setToastProp({ message: result.message, type: "info" });
+    } else {
+      setToastProp({ message: result.message, type: "warning" });
+    }
+    setShowToast(true);
   }, []);
 
   const editPoi = (id) => {
@@ -65,37 +60,25 @@ const AdminPage = () => {
     handleShowQr();
   };
 
-  const onSubmit = async (
-    event,
-    id,
-    title,
-    latitude,
-    longitude,
-    description,
-    inputWebsite,
-    isActive
-  ) => {
-    event.preventDefault();
-    console.log("submit");
-    setLoading(true);
-
-    try {
-      await poisCollection.add({
-        title,
-        latitude,
-        longitude,
-        description,
-        inputWebsite,
-      });
-      PoisToDisplay();
-    } catch (e) {
-      console.error(e);
-      setError("Could not add new POI");
-    } finally {
+  const onSubmit = useCallback(
+    async (event, id, title, latitude, longitude, description, inputWebsite, isActive) => {
+      event.preventDefault();
+      setLoading(true);
+      console.log("submit");
+      const fields = { title, latitude, longitude, description, inputWebsite, isActive };
+      const result = await addPoi(fields);
+      await PoisToDisplay();
+      if (result.err) {
+        setToastProp({ message: result.message, type: "warning" });
+      } else {
+        setToastProp({ message: result.message, type: "info" });
+        handleCloseNew();
+      }
       setLoading(false);
-    }
-    if (!error) handleCloseNew();
-  };
+      setShowToast(true);
+    },
+    []
+  );
 
   const onEdit = useCallback(
     async (event, id, title, latitude, longitude, description, inputWebsite, isActive) => {
@@ -105,9 +88,15 @@ const AdminPage = () => {
       setLoading(true);
       const fields = { title, latitude, longitude, description, inputWebsite, isActive };
       const result = await updatePoi(id, fields);
-      if (!result.err) handleCloseEdit();
-      PoisToDisplay();
+      await PoisToDisplay();
+      if (result.err) {
+        setToastProp({ message: result.message, type: "warning" });
+      } else {
+        setToastProp({ message: result.message, type: "info" });
+        handleCloseEdit();
+      }
       setLoading(false);
+      setShowToast(true);
     },
     []
   );
@@ -126,10 +115,24 @@ const AdminPage = () => {
     PoisToDisplay();
   }, []);
 
-  if (!pois || pois.length === 0 || loading) return <p>"Loading"</p>;
+  if (!pois || pois.length === 0 || loading)
+    return (
+      <Spinner
+        animation="border"
+        variant="primary"
+        style={{ position: "fixed", top: "50%", left: "50%" }}
+      />
+    );
   else
     return (
       <>
+        <InfoToast
+          show={showToast}
+          setShow={setShowToast}
+          message={toastProp.message}
+          type={toastProp.type}
+        />
+
         <h1>Welcome on admin page</h1>
 
         <PopUpModal
@@ -148,7 +151,7 @@ const AdminPage = () => {
           title={"Qr code"}
           show={showQrModal}
           handleHide={handleCloseQr}
-          component={<QrCodeHandler value={qrRef} />}
+          component={<QrCodeHandler value={qrRef} fullFunctions={true} />}
         />
         <Container style={style.container} fluid>
           <Row style={style.tableRow}>
@@ -159,6 +162,7 @@ const AdminPage = () => {
                 editPoi={editPoi}
                 showQr={showQr}
                 setMapPoi={handleMapSelection}
+                fullFunctions={true}
               />
               <Button style={style.tableButton} onClick={handleShowNew}>
                 Create new POI
@@ -169,9 +173,6 @@ const AdminPage = () => {
             <MapView pois={mapData} />
           </Row>
         </Container>
-
-        {/*   {isOpen ? <AddPoi showNew={showModal} isOpen={isOpen} /> : null}*/}
-        {/*{isOpen ? <AddPoi showNew={showModal} isOpen={isOpen} /> : null} <MapView user={user} />*/}
       </>
     );
 };
@@ -188,7 +189,7 @@ const style = {
   },
   tableRow: {
     alignItems: "center",
-    width: "70%",
+    width: "90%",
     marginTop: 20,
   },
   table: {

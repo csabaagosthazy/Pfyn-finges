@@ -12,9 +12,6 @@ function MapView(props) {
   let [zoom, setZoom] = useState(14);
   let [positions, setPositions] = useState(null);
 
-  console.log("MAPVIEW POIS", props.pois);
-  console.log("MAPVIEW POSITION", positions);
-
   useEffect(() => {
     async function getPositions() {
       if (props.gpx) {

@@ -17,18 +17,22 @@ const downloadQRCode = () => {
   document.body.removeChild(aEl);
 };
 
-const QrCodeHandler = ({ value }) => {
+const QrCodeHandler = ({ value, fullFunctions }) => {
   return (
     <Card className="text-center">
       <Card.Subtitle className="mb-2 text-muted">{value}</Card.Subtitle>
       <Card.Body>
         <QrCode id={"generatedQrCode"} value={value} size={400} />
       </Card.Body>
-      <Card.Footer className="text-muted">
-        <Button variant="primary" onClick={downloadQRCode}>
-          download
-        </Button>
-      </Card.Footer>
+      {fullFunctions ? (
+        <Card.Footer className="text-muted">
+          <Button variant="primary" onClick={downloadQRCode}>
+            download
+          </Button>
+        </Card.Footer>
+      ) : (
+        <div></div>
+      )}
     </Card>
   );
 };
