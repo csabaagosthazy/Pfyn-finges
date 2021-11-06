@@ -1,6 +1,4 @@
 import { firebase } from "../initFirebase";
-import { forEach } from "lodash/fp/_util";
-import { signOut } from "firebase/auth";
 
 const db = firebase.firestore();
 
@@ -30,10 +28,7 @@ export async function showGPX(gpx) {
   let parser = new DOMParser();
   let parsed = parser.parseFromString(result, "application/xml");
   let nodes = [...parsed.querySelectorAll("trkpt")];
-  let coords = nodes.map((node) => [
-    node.attributes.lat.value,
-    node.attributes.lon.value,
-  ]);
+  let coords = nodes.map((node) => [node.attributes.lat.value, node.attributes.lon.value]);
   console.log(coords);
   return coords;
 }
@@ -96,24 +91,48 @@ export async function getUserParams(user) {
 
 export async function getPoisByUser(user, isAdmin) {
   let pois = [];
-  if (isAdmin) {
+  let myuser = await getUserParams(user);
+  let poisToShow = myuser.pois;
+  for (let poi in poisToShow) {
     db.collection("pois")
+      .doc(poisToShow[poi])
       .get()
-      .then((item) => {
-        pois = item.docs.map((doc) => doc.data());
-        console.log("POI FOR ", isAdmin, " are ", pois);
-        return pois;
-      });
-  } else {
-    let myuser = await getUserParams(user);
-    let poisToShow = myuser.pois;
-    for (let poi in poisToShow) {
-      db.collection("pois")
-        .doc(poisToShow[poi])
-        .get()
-        .then((poi) => pois.push({ id: poi.id, ...poi.data() }));
-    }
-    console.log("POI FOR ", isAdmin, " are ", pois);
-    return pois;
+      .then((poi) => pois.push({ id: poi.id, ...poi.data() }));
   }
+  return pois;
+}
+
+export async function getAllPois() {
+  const events = firebase.firestore().collection("pois");
+  const tempDoc = [];
+  await events.get().then((querySnapshot) => {
+    querySnapshot.forEach((doc) => {
+      tempDoc.push({ id: doc.id, ...doc.data() });
+    });
+    console.log(tempDoc);
+  });
+  return tempDoc;
+}
+
+export async function updatePoi(id, fields) {
+  //this method try to find a document with a given id and modify it.
+  //if the doc doesn't exist it will return "not found"
+  let result = { err: "", message: "" };
+  const poiRef = firebase.firestore().collection("pois").doc(id);
+  const found = await poiRef.get().then((doc) => doc.exists);
+
+  if (found) {
+    const data = await poiRef.get().then((doc) => doc.data());
+    const modifiedData = { ...data, ...fields };
+    await poiRef
+      .set({
+        ...modifiedData,
+      })
+      .then((result = { err: "", message: "Document successfully written!" }))
+      .catch((err) => (result = { err: "Document couldn't be modified!", message: err }));
+  } else {
+    result = { err: "Not found", message: `Document with id ${id} not found!` };
+  }
+
+  return result;
 }

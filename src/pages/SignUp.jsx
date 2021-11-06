@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useAuth } from "../context/Auth2";
 
 import { Link, useHistory } from "react-router-dom";
@@ -36,8 +36,16 @@ const SignUp = () => {
     try {
       setError("");
       setLoading(true);
-      let user = await signup(emailRef.current.value, passwordRef.current.value);
-      if (user) await createUserData(user, firstnameRef.current.value, lastnameRef.current.value);
+      let user = await signup(
+        emailRef.current.value,
+        passwordRef.current.value
+      );
+      if (user)
+        await createUserData(
+          user,
+          firstnameRef.current.value,
+          lastnameRef.current.value
+        );
     } catch {
       setError("Failed to create an account");
     } finally {
