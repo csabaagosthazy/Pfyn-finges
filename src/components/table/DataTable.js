@@ -5,7 +5,14 @@ import BlockIcon from "@mui/icons-material/Block";
 import EditIcon from "@mui/icons-material/Edit";
 import QrCodeIcon from "@mui/icons-material/QrCode";
 
-export default function DataTable({ data, changePoiActivity, editPoi, showQr, setMapPoi }) {
+export default function DataTable({
+  data,
+  changePoiActivity,
+  editPoi,
+  showQr,
+  setMapPoi,
+  fullFunctions,
+}) {
   const [selectionModel, setSelectionModel] = React.useState([]);
   console.log(data);
   //rows and columns
@@ -48,44 +55,53 @@ export default function DataTable({ data, changePoiActivity, editPoi, showQr, se
 
   const columns = React.useMemo(
     () => [
-      { field: "title", headerName: "Title", minWidth: 120 },
-      { field: "latitude", headerName: "Latitude", minWidth: 130 },
-      { field: "longitude", headerName: "Longitude", minWidth: 150 },
+      { field: "title", headerName: "Title", flex: 0.15, minWidth: 100 },
+      { field: "latitude", headerName: "Latitude", flex: 0.1, minWidth: 100 },
+      { field: "longitude", headerName: "Longitude", flex: 0.1, minWidth: 100 },
       {
         field: "description",
         headerName: "Description",
         sortable: false,
-        minWidth: 160,
-        valueGetter: (params) =>
-          `${params.getValue(params.id, "title") || ""} ${
-            params.getValue(params.id, "inputWebsite") || ""
-          }`,
+        flex: 0.2,
+        minWidth: 100,
       },
-      { field: "inputWebsite", headerName: "Website", minWidth: 130 },
+      { field: "inputWebsite", headerName: "Website", flex: 0.2, minWidth: 100 },
       {
         field: "isActive",
         headerName: "Avtive POI",
-        minWidth: 150,
+        flex: 0.1,
+        minWidth: 50,
       },
       {
         field: "actions",
         type: "actions",
-        width: 120,
+        flex: 0.1,
+        minWidth: 100,
         getActions: (params) => [
-          params.row.isActive ? (
-            <GridActionsCellItem
-              icon={<BlockIcon />}
-              label="Activate"
-              onClick={handleActivate(params.id, params.row.isActive)}
-            />
+          fullFunctions ? (
+            <div>
+              <GridActionsCellItem
+                icon={<EditIcon />}
+                label="Edit"
+                onClick={handleEdit(params.id)}
+              />
+              {params.row.isActive ? (
+                <GridActionsCellItem
+                  icon={<BlockIcon />}
+                  label="Activate"
+                  onClick={handleActivate(params.id, params.row.isActive)}
+                />
+              ) : (
+                <GridActionsCellItem
+                  icon={<CheckIcon />}
+                  label="Activate"
+                  onClick={handleActivate(params.id)}
+                />
+              )}
+            </div>
           ) : (
-            <GridActionsCellItem
-              icon={<CheckIcon />}
-              label="Activate"
-              onClick={handleActivate(params.id)}
-            />
+            <div></div>
           ),
-          <GridActionsCellItem icon={<EditIcon />} label="Edit" onClick={handleEdit(params.id)} />,
           <GridActionsCellItem
             icon={<QrCodeIcon />}
             label="Qr"
@@ -98,12 +114,12 @@ export default function DataTable({ data, changePoiActivity, editPoi, showQr, se
   );
 
   return (
-    <div style={{ height: 500, width: "80%", backgroundColor: "white" }}>
+    <div style={{ height: 350, width: "80%", backgroundColor: "white" }}>
       <DataGrid
         rows={data}
         columns={columns}
-        pageSize={10}
-        rowsPerPageOptions={[10]}
+        pageSize={5}
+        rowsPerPageOptions={[5]}
         checkboxSelection
         disableSelectionOnClick
         onSelectionModelChange={(newSelectionModel) => {
