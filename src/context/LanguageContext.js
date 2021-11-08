@@ -25,7 +25,7 @@ export const LanguageProvider = ({children}) => {
     const [language, setLanguage] = useState(chosenLanguage);
 
     const changeLanguage = (language) => {
-        window.localStorage.setItem('rcml-lang', chosenLanguage);
+        window.localStorage.setItem('rcml-lang', language);
         setLanguage(language);
     }
 
