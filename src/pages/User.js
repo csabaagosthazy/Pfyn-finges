@@ -8,7 +8,11 @@ import QrCodeHandler from "../components/qrcode/QrCodeHandler";
 import { useCallback, useEffect, useState } from "react";
 import { Container, Col, Row, Spinner } from "react-bootstrap";
 
+import translation from "../locales/translation.json"
+import {useLang} from "../context/LanguageContext";
+
 const UserPage = () => {
+  const {language} = useLang();
   const { currentUser } = useAuth();
   const [showQrModal, setShowQrModal] = useState(false);
   const [mapData, setMapData] = useState(null);
@@ -75,9 +79,9 @@ const UserPage = () => {
   else
     return (
       <>
-        <h1>Welcome on user page</h1>
+        <h1>{translation[language].welcome_user}</h1>
         <PopUpModal
-          title={"Qr code"}
+          title={translation[language].qr_code}
           show={showQrModal}
           handleHide={handleCloseQr}
           component={<QrCodeHandler value={qrRef} fullFunctions={false} />}

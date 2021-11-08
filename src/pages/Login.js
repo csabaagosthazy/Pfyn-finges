@@ -1,8 +1,10 @@
 import { useState, useEffect, useRef } from "react";
 import { useAuth } from "../context/Auth2";
+import translation from "../locales/translation.json";
 
 import { Form, Button, Card, Alert } from "react-bootstrap";
 import { Link, useHistory } from "react-router-dom";
+import {useLang} from "../context/LanguageContext";
 
 const Login = () => {
   const [email, setEmail] = useState();
@@ -11,6 +13,7 @@ const Login = () => {
   const { login, checkAdmin } = useAuth();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const {language} = useLang();
   const history = useHistory();
 
   useEffect(() => {
@@ -41,11 +44,11 @@ const Login = () => {
         if (!!user) {
           console.log("Yes user");
           console.log(isAdmin);
-          alert("Authorization success!");
+          alert(translation[language].auth_success);
           if (isAdmin) history.push("/admin");
           else history.push("/user");
         } else {
-          alert("Authorization failed!");
+          alert(translation[language].auth_failed);
           history.push("/");
         }
       }
@@ -56,11 +59,11 @@ const Login = () => {
     <>
       <Card>
         <Card.Body>
-          <h2 className="text-center mb-4">Log In</h2>
+          <h2 className="text-center mb-4">{translation[language].login}</h2>
           {error && <Alert variant="danger">{error}</Alert>}
           <Form onSubmit={handleSubmit}>
             <Form.Group id="email">
-              <Form.Label>Email</Form.Label>
+              <Form.Label>{translation[language].email}</Form.Label>
               <Form.Control
                 type="email"
                 onChange={(e) => setEmail(e.target.value)}
@@ -68,7 +71,7 @@ const Login = () => {
               />
             </Form.Group>
             <Form.Group id="password">
-              <Form.Label>Password</Form.Label>
+              <Form.Label>{translation[language].password}</Form.Label>
               <Form.Control
                 type="password"
                 onChange={(e) => setPassword(e.target.value)}
@@ -76,13 +79,13 @@ const Login = () => {
               />
             </Form.Group>
             <Button disabled={loading} className="w-100" type="submit">
-              Log In
+              {translation[language].login}
             </Button>
           </Form>
         </Card.Body>
       </Card>
       <div className="w-100 text-center mt-2">
-        Need an account? <Link to="/signup">Sign Up</Link>
+        {translation[language].need_account} <Link to="/signup">{translation[language].signup}</Link>
       </div>
     </>
   );

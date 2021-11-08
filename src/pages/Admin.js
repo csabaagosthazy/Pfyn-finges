@@ -7,6 +7,8 @@ import MapView from "../components/MapView";
 import QrCodeHandler from "../components/qrcode/QrCodeHandler";
 import InfoToast from "../components/toast/InfoToast";
 import { getAllPois, updatePoi, addPoi } from "../services/dbService";
+import translation from "../locales/translation.json"
+import {useLang} from "../context/LanguageContext";
 
 const AdminPage = () => {
   const [showNew, setShowNew] = useState(false);
@@ -20,6 +22,8 @@ const AdminPage = () => {
   const [poiToEdit, setPoiToEdit] = useState(null);
   const [qrRef, setQrRef] = useState();
   const [toastProp, setToastProp] = useState({ message: "", type: "" });
+
+  const {language} = useLang();
 
   const handleShowNew = () => setShowNew(true);
   const handleCloseNew = () => setShowNew(false);
@@ -132,22 +136,22 @@ const AdminPage = () => {
           type={toastProp.type}
         />
 
-        <h1>Welcome on admin page</h1>
+          <h1>{translation[language].welcome_admin}</h1>
 
         <PopUpModal
-          title={"Creat new POI"}
+          title={translation[language].new_poi}
           show={showNew}
           handleHide={handleCloseNew}
           component={<PoiForm onSubmit={onSubmit} values={null} />}
         />
         <PopUpModal
-          title={"Modify POI"}
+          title={translation[language].modify_poi}
           show={showEdit}
           handleHide={handleCloseEdit}
           component={<PoiForm onSubmit={onEdit} values={poiToEdit} />}
         />
         <PopUpModal
-          title={"Qr code"}
+          title={translation[language].qr_code}
           show={showQrModal}
           handleHide={handleCloseQr}
           component={<QrCodeHandler value={qrRef} fullFunctions={true} />}
@@ -164,7 +168,7 @@ const AdminPage = () => {
                 fullFunctions={true}
               />
               <Button style={style.tableButton} onClick={handleShowNew}>
-                Create new POI
+                  {translation[language].new_poi}
               </Button>
             </Col>
           </Row>

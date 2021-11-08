@@ -17,18 +17,18 @@ export const Navigation = (props) => {
   return (
     <Navbar bg="dark" variant="dark">
       <Container>
-        <Navbar.Brand href="/">Home</Navbar.Brand>
+        <Navbar.Brand href="/">{translation[language].homepage}</Navbar.Brand>
         <Nav defaultActiveKey="/home" as="ul">
           <Nav.Item as="li">
             {currentUser && (
               <Nav.Link href={isAdmin ? "/admin" : "/user"}>
-                {isAdmin ? "Administration" : "My Account"}
+                {isAdmin ? translation[language].administration : translation[language].account}
               </Nav.Link>
             )}
           </Nav.Item>
           <Nav.Item as="li">
             {currentUser && isAdmin && (
-              <Nav.Link href={"/user"}>{"User page"}</Nav.Link>
+              <Nav.Link href={"/user"}>{translation[language].user_page}</Nav.Link>
             )}
           </Nav.Item>
         </Nav>
@@ -52,7 +52,7 @@ export const Navigation = (props) => {
         </Nav>
         <Dropdown>
           <Dropdown.Toggle variant="success" id="dropdown-basic">
-            Choose your language
+            {language === 'en' ? ('English') : ('Français')}
           </Dropdown.Toggle>
           <Dropdown.Menu>
             {languagesList.map(({ code, name, country_code }) => (

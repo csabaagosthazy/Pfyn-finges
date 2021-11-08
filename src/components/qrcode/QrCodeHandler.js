@@ -1,6 +1,8 @@
 import React from "react";
 import QrCode from "qrcode.react";
 import { Button, Card } from "react-bootstrap";
+import translation from "../../locales/translation.json"
+import {useLang} from "../../context/LanguageContext";
 
 // download QR code
 const downloadQRCode = () => {
@@ -18,6 +20,8 @@ const downloadQRCode = () => {
 };
 
 const QrCodeHandler = ({ value, fullFunctions }) => {
+    const {language} = useLang();
+
   return (
     <Card className="text-center">
       <Card.Subtitle className="mb-2 text-muted">{value}</Card.Subtitle>
@@ -27,7 +31,7 @@ const QrCodeHandler = ({ value, fullFunctions }) => {
       {fullFunctions ? (
         <Card.Footer className="text-muted">
           <Button variant="primary" onClick={downloadQRCode}>
-            download
+              {translation[language].download}
           </Button>
         </Card.Footer>
       ) : (

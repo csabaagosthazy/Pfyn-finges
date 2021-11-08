@@ -1,4 +1,5 @@
-import React, { useContext, useState } from "react";
+import React, {useContext, useEffect, useState} from "react";
+import DataTable from "../components/table/DataTable";
 
 export const LanguageContext = React.createContext({
   language: "en",

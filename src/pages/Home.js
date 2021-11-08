@@ -25,7 +25,7 @@ const HomePage = () => {
       <img src={forest} alt="Forest" width="800" />
       <p>
         <a href="https://fr.freepik.com/vecteurs/fond">
-          Fond vecteur créé par upklyak - fr.freepik.com
+          {translation[language].vector_bg}
         </a>
       </p>
     </div>
