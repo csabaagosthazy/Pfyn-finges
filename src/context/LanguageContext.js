@@ -4,25 +4,6 @@ export const LanguageContext = React.createContext({
     language: 'en'
 });
 
-export const languages = {
-    en: {
-        welcome_title: 'Welcome to Pfyn-Finges !',
-        admin: 'Admin',
-        user: 'User',
-        your_role: 'Your role is : ',
-        pois_collection: 'POIs Collection',
-        logout: 'Logout',
-    },
-    fr: {
-        welcome_title: 'Bienvenue à Pfyn-Finges !',
-        admin: 'Administrateur',
-        user: 'Utilisateur',
-        your_role: 'Votre rôle est : ',
-        pois_collection: 'Collection de points d\'intérêt',
-        logout: 'Déconnexion',
-    }
-};
-
 export const languagesList = [
     {
         code: 'en',
@@ -37,14 +18,19 @@ export const languagesList = [
 ];
 
 export const LanguageProvider = ({children}) => {
-    const [language, setLanguage] = useState('en');
+    if (window.localStorage.getItem('rcml-lang') === null)
+        window.localStorage.setItem('rcml-lang', 'en');
+
+    let chosenLanguage = window.localStorage.getItem('rcml-lang')
+    const [language, setLanguage] = useState(chosenLanguage);
 
     const changeLanguage = (language) => {
+        window.localStorage.setItem('rcml-lang', language);
         setLanguage(language);
     }
 
     return (
-        <LanguageContext.Provider value={{languages, language, changeLanguage}}>
+        <LanguageContext.Provider value={{language, changeLanguage}}>
             {children}
         </LanguageContext.Provider>
     )

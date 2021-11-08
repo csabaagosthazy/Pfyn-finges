@@ -6,12 +6,13 @@ import Navbar from "react-bootstrap/Navbar";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import { Dropdown } from "react-bootstrap";
-import {languagesList, useLang} from "../context/LanguageContext";
+import { languagesList, useLang } from "../context/LanguageContext";
+import translation from "../locales/translation.json";
 
 export const Navigation = (props) => {
   //auth user and role needed
   const { currentUser, logout, isAdmin } = useAuth();
-  const {changeLanguage} = useLang();
+  const { changeLanguage, language } = useLang();
   console.log("navbar");
   return (
     <Navbar bg="dark" variant="dark">
@@ -19,15 +20,21 @@ export const Navigation = (props) => {
         <Navbar.Brand href="/">Navbar</Navbar.Brand>
         <Nav defaultActiveKey="/home" as="ul">
           <Nav.Item as="li">
-            <Nav.Link href={isAdmin ? "/admin" : "/user"}>Account</Nav.Link>
+            {currentUser && (
+              <Nav.Link href={isAdmin ? "/admin" : "/user"}>
+                {translation[language].account}
+              </Nav.Link>
+            )}
           </Nav.Item>
         </Nav>
         <Nav className="justify-content-end" activeKey="/home">
           <Nav.Item>
             {currentUser ? (
-              <Nav.Link onClick={logout}>Logout</Nav.Link>
+              <Nav.Link onClick={logout}>
+                {translation[language].logout}
+              </Nav.Link>
             ) : (
-              <Nav.Link href="/login">Login</Nav.Link>
+              <Nav.Link href="/login">{translation[language].login}</Nav.Link>
             )}
           </Nav.Item>
           {
