@@ -18,6 +18,9 @@ export const languagesList = [
 ];
 
 export const LanguageProvider = ({children}) => {
+    if (window.localStorage.getItem('rcml-lang'))
+        window.localStorage.setItem('rcml-lang', 'en');
+
     const defaultLanguage = window.localStorage.getItem('rcml-lang')
     const [language, setLanguage] = useState(defaultLanguage);
 
