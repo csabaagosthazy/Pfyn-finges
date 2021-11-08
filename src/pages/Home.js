@@ -2,7 +2,8 @@ import React from "react";
 import { useAuth } from "../context/Auth2";
 import { useHistory } from "react-router-dom";
 import forest from "../img/2040.jpg";
-import {useLang, languages} from "../context/LanguageContext";
+import {useLang} from "../context/LanguageContext";
+import translation from "../locales/translation.json"
 
 const HomePage = () => {
   const { currentUser, isAdmin } = useAuth();
@@ -22,7 +23,7 @@ const HomePage = () => {
 
   return (
       <div>
-        <h1>{languages[language].welcome_title}</h1>
+        <h1>{translation[language].welcome_title}</h1>
         <img src={forest} alt="Forest image" width="800" />
         <p>
           <a href="https://fr.freepik.com/vecteurs/fond">
