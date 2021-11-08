@@ -107,7 +107,7 @@ export async function getUserParams(user) {
 export async function getPoisByUser(user) {
   let result = { err: "", message: "", response: "" };
   let myuser = await getUserParams(user);
-  let poisToShow = myuser.pois;
+  let poisToShow = myuser.response.pois;
   await db
     .collection("pois")
     .get()
