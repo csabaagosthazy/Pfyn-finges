@@ -5,6 +5,9 @@ import { Link, useHistory } from "react-router-dom";
 import { Form, Button, Card, Alert } from "react-bootstrap";
 import { createUserData } from "../services/dbService";
 
+import translation from "../locales/translation.json"
+import {useLang} from "../context/LanguageContext";
+
 const SignUp = () => {
   const { signup } = useAuth();
 
@@ -16,6 +19,7 @@ const SignUp = () => {
   const [isMounted, setIsMounted] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const {language} = useLang();
   const history = useHistory();
 
   useEffect(() => {
@@ -58,7 +62,7 @@ const SignUp = () => {
           {error && <Alert variant="danger">{error}</Alert>}
           <Form onSubmit={handleSubmit}>
             <Form.Group id="email">
-              <Form.Label>Email</Form.Label>
+              <Form.Label>{translation[language].email}</Form.Label>
               <Form.Control
                 type="email"
                 onChange={(e) => setEmail(e.target.value)}
@@ -66,7 +70,7 @@ const SignUp = () => {
               />
             </Form.Group>
             <Form.Group id="firstname">
-              <Form.Label>Firstname</Form.Label>
+              <Form.Label>{translation[language].firstname}</Form.Label>
               <Form.Control
                 type="firstname"
                 onChange={(e) => setFirstName(e.target.value)}
@@ -74,7 +78,7 @@ const SignUp = () => {
               />
             </Form.Group>
             <Form.Group id="lastname">
-              <Form.Label>Lastname</Form.Label>
+              <Form.Label>{translation[language].lastname}</Form.Label>
               <Form.Control
                 type="lastname"
                 onChange={(e) => setLastName(e.target.value)}
@@ -82,7 +86,7 @@ const SignUp = () => {
               />
             </Form.Group>
             <Form.Group id="password">
-              <Form.Label>Password</Form.Label>
+              <Form.Label>{translation[language].password}</Form.Label>
               <Form.Control
                 type="password"
                 onChange={(e) => setPassword(e.target.value)}
@@ -90,7 +94,7 @@ const SignUp = () => {
               />
             </Form.Group>
             <Form.Group id="password-confirm">
-              <Form.Label>Password Confirmation</Form.Label>
+              <Form.Label>{translation[language].password_confirmation}</Form.Label>
               <Form.Control
                 type="password"
                 onChange={(e) => setPassConfirm(e.target.value)}
@@ -98,13 +102,13 @@ const SignUp = () => {
               />
             </Form.Group>
             <Button disabled={loading} className="w-100" type="submit">
-              Sign Up
+              {translation[language].signup}
             </Button>
           </Form>
         </Card.Body>
       </Card>
       <div className="w-100 text-center mt-2">
-        Already have an account? <Link to="/login">Log In</Link>
+        {translation[language].already_account} <Link to="/login">{translation[language].login}</Link>
       </div>
     </>
   );

@@ -3,8 +3,11 @@ import { MapContainer, Polyline, TileLayer, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { Dropdown, Alert } from "react-bootstrap";
 import ShowPois from "./ShowPois";
+import translation from "../locales/translation.json"
+import {useLang} from "../context/LanguageContext";
 
 function MapView({ pois, positions, gpxHistory, setGpx }) {
+    const {language} = useLang();
   const [currentLocation] = useState({
     lat: 46.294574,
     lng: 7.569767,
@@ -17,13 +20,12 @@ function MapView({ pois, positions, gpxHistory, setGpx }) {
   if (!gpxHistory && !positions && !pois)
     return (
       <Alert variant="info">
-        <Alert.Heading>Map view</Alert.Heading>
+        <Alert.Heading>{translation[language].map_view}</Alert.Heading>
         <p>
-          To be able to see the map, you need to visit some places or track some
-          of your trips
+            {translation[language].see_map_alert}
         </p>
         <hr />
-        <p className="mb-0">For more information please read our user guide</p>
+        <p className="mb-0">{translation[language].for_info}</p>
       </Alert>
     );
   return (
@@ -35,7 +37,7 @@ function MapView({ pois, positions, gpxHistory, setGpx }) {
             id="dropdown-basic"
             style={style.mapDropdown}
           >
-            History
+              {translation[language].history}
           </Dropdown.Toggle>
 
           <Dropdown.Menu>
