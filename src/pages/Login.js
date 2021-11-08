@@ -7,10 +7,8 @@ import { Link, useHistory } from "react-router-dom";
 const Login = () => {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
-  const emailRef = useRef();
-  const passwordRef = useRef();
   const isMounted = useRef(null);
-  const { login, checkAdmin, currentUser } = useAuth();
+  const { login, checkAdmin } = useAuth();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const history = useHistory();
@@ -63,7 +61,11 @@ const Login = () => {
           <Form onSubmit={handleSubmit}>
             <Form.Group id="email">
               <Form.Label>Email</Form.Label>
-              <Form.Control type="email" onChange={(e) => setEmail(e.target.value)} required />
+              <Form.Control
+                type="email"
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
             </Form.Group>
             <Form.Group id="password">
               <Form.Label>Password</Form.Label>

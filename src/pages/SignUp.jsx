@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "../context/Auth2";
 
 import { Link, useHistory } from "react-router-dom";
@@ -59,7 +59,11 @@ const SignUp = () => {
           <Form onSubmit={handleSubmit}>
             <Form.Group id="email">
               <Form.Label>Email</Form.Label>
-              <Form.Control type="email" onChange={(e) => setEmail(e.target.value)} required />
+              <Form.Control
+                type="email"
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
             </Form.Group>
             <Form.Group id="firstname">
               <Form.Label>Firstname</Form.Label>

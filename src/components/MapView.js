@@ -5,11 +5,11 @@ import { Dropdown, Alert } from "react-bootstrap";
 import ShowPois from "./ShowPois";
 
 function MapView({ pois, positions, gpxHistory, setGpx }) {
-  let [currentLocation, setCurrentLocation] = useState({
+  const [currentLocation] = useState({
     lat: 46.294574,
     lng: 7.569767,
   });
-  let [zoom, setZoom] = useState(14);
+  const zoom = 14;
 
   const handleClick = (event) => {
     setGpx(event);
@@ -18,7 +18,10 @@ function MapView({ pois, positions, gpxHistory, setGpx }) {
     return (
       <Alert variant="info">
         <Alert.Heading>Map view</Alert.Heading>
-        <p>To be able to see the map, you need to visit some places or track some of your trips</p>
+        <p>
+          To be able to see the map, you need to visit some places or track some
+          of your trips
+        </p>
         <hr />
         <p className="mb-0">For more information please read our user guide</p>
       </Alert>
@@ -27,14 +30,22 @@ function MapView({ pois, positions, gpxHistory, setGpx }) {
     <>
       {gpxHistory && (
         <Dropdown>
-          <Dropdown.Toggle variant="success" id="dropdown-basic" style={style.mapDropdown}>
+          <Dropdown.Toggle
+            variant="success"
+            id="dropdown-basic"
+            style={style.mapDropdown}
+          >
             History
           </Dropdown.Toggle>
 
           <Dropdown.Menu>
-            {gpxHistory.map((jesus, index) => (
-              <Dropdown.Item name={jesus} onClick={(event) => handleClick(event)} key={index}>
-                {jesus}
+            {gpxHistory.map((gpxElement, index) => (
+              <Dropdown.Item
+                name={gpxElement}
+                onClick={(event) => handleClick(event)}
+                key={index}
+              >
+                {gpxElement}
               </Dropdown.Item>
             ))}
           </Dropdown.Menu>
@@ -54,7 +65,10 @@ function MapView({ pois, positions, gpxHistory, setGpx }) {
         )}
         {positions && (
           <MapCenter
-            position={positions.length > 0 && positions[Math.round(positions.length / 2)]}
+            position={
+              positions.length > 0 &&
+              positions[Math.round(positions.length / 2)]
+            }
           />
         )}
         {pois && <ShowPois pois={pois} />}
