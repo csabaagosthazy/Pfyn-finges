@@ -4,6 +4,7 @@ import CheckIcon from "@mui/icons-material/Check";
 import BlockIcon from "@mui/icons-material/Block";
 import EditIcon from "@mui/icons-material/Edit";
 import QrCodeIcon from "@mui/icons-material/QrCode";
+import { Alert } from "react-bootstrap";
 
 export default function DataTable({
   data,
@@ -14,7 +15,6 @@ export default function DataTable({
   fullFunctions,
 }) {
   const [selectionModel, setSelectionModel] = React.useState([]);
-  console.log(data);
   //rows and columns
   const handleActivate = React.useCallback(
     (id, isActive) => () => {
@@ -43,13 +43,10 @@ export default function DataTable({
     []
   );
   const handleSelect = (newSelectionModel) => {
-    console.log(newSelectionModel);
-
     const poi = data.filter((dataItem) => {
       return newSelectionModel.includes(dataItem.id);
     });
     setMapPoi(poi);
-    console.log(poi);
     setSelectionModel(newSelectionModel);
   };
 
@@ -68,7 +65,7 @@ export default function DataTable({
       { field: "inputWebsite", headerName: "Website", flex: 0.2, minWidth: 100 },
       {
         field: "isActive",
-        headerName: "Avtive POI",
+        headerName: "Active POI",
         flex: 0.1,
         minWidth: 50,
       },
@@ -112,7 +109,18 @@ export default function DataTable({
     ],
     [handleActivate, handleEdit, handleQr]
   );
-
+  if (!data)
+    return (
+      <Alert variant="success">
+        <Alert.Heading>Hey, nice to see you</Alert.Heading>
+        <p>
+          Unfortunately it seems you haven't visited any points yet. Later you will be able to see
+          here your personal history.
+        </p>
+        <hr />
+        <p className="mb-0">For more information please read our user guide</p>
+      </Alert>
+    );
   return (
     <div style={{ height: 350, width: "80%", backgroundColor: "white" }}>
       <DataGrid
