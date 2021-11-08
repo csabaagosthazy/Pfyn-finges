@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React from "react";
 
 import { useAuth } from "../context/Auth2";
 
@@ -17,13 +17,18 @@ export const Navigation = (props) => {
   return (
     <Navbar bg="dark" variant="dark">
       <Container>
-        <Navbar.Brand href="/">Navbar</Navbar.Brand>
+        <Navbar.Brand href="/">Home</Navbar.Brand>
         <Nav defaultActiveKey="/home" as="ul">
           <Nav.Item as="li">
             {currentUser && (
               <Nav.Link href={isAdmin ? "/admin" : "/user"}>
-                {translation[language].account}
+                {isAdmin ? "Administration" : "My Account"}
               </Nav.Link>
+            )}
+          </Nav.Item>
+          <Nav.Item as="li">
+            {currentUser && isAdmin && (
+              <Nav.Link href={"/user"}>{"User page"}</Nav.Link>
             )}
           </Nav.Item>
         </Nav>
