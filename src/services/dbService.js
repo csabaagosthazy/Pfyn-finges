@@ -2,34 +2,63 @@ import { firebase } from "../initFirebase";
 
 const db = firebase.firestore();
 
-/* The road parameter has to be an XML string */
+/**
+ * Get gpx, XML string from database by id
+ * @param {String} gpx gpx id
+ * @returns {object} Result of fetch process
+ */
 export async function showGPX(gpx) {
-  var gpxFile = db.collection("gpx").doc(gpx);
-  let gpxToShow;
-  await gpxFile
+  let result = { err: "", message: "", response: "" };
+  const gpxRef = db.collection("gpx").doc(gpx);
+
+  await gpxRef
+    .get()
+    .then(async (doc) => {
+      if (doc.exists) {
+        /* Fetch something from the database, and replace the road with the content of the DB
+         *  It might get a user, with all pois and points related to this user */
+        let data = await gpxRef.get().then((doc) => doc.data().file);
+        let parser = new DOMParser();
+        let parsed = parser.parseFromString(data, "application/xml");
+        let nodes = [...parsed.querySelectorAll("trkpt")];
+        let coords = nodes.map((node) => [node.attributes.lat.value, node.attributes.lon.value]);
+        result = { err: "", message: "Success!", response: coords };
+      } else {
+        result = { err: "Not found!", message: `Gpx ${gpx} not found!`, response: "" };
+      }
+    })
+    .catch((error) => {
+      result = { err: "Error!", message: `Error getting document: ${error}`, response: "" };
+    });
+
+  return result;
+}
+
+/**
+ *  Get gpx history by user
+ * @param {object} user user object
+ * @returns {object} Result of fetch process
+ */
+export async function getGPXAsString(user) {
+  let result = { err: "", message: "", response: "" };
+  var dataUser = db.collection("users").doc(user.uid);
+
+  await dataUser
     .get()
     .then((doc) => {
       if (doc.exists) {
-        gpxToShow = doc.data().file;
-        //console.log("Document data:", gpxToShow);
+        result = { err: "", message: "Success", response: doc.data().gpx };
       } else {
         console.log("no such document !");
+        result = { err: "Not found", message: `No gpx stored for user: ${user.uid}`, response: "" };
       }
     })
     .catch((error) => {
       console.log("Error getting document: ", error);
+      result = { err: "Error", message: `Error getting user gpx: ${error}`, response: "" };
     });
-
-  const result = gpxToShow;
-  /* Fetch something from the database, and replace the road with the content of the DB
-   *  It might get a user, with all pois and points related to this user */
-  let parser = new DOMParser();
-  let parsed = parser.parseFromString(result, "application/xml");
-  let nodes = [...parsed.querySelectorAll("trkpt")];
-  let coords = nodes.map((node) => [node.attributes.lat.value, node.attributes.lon.value]);
-  return coords;
+  return result;
 }
-
 export async function createUserData(user, firstname, lastname) {
   let users = db.collection("users");
   let userDocumentRef = users.doc(user.user.uid);
@@ -46,74 +75,85 @@ export async function createUserData(user, firstname, lastname) {
   }
   return user;
 }
-
-export async function getGPXAsString(user) {
-  var dataUser = db.collection("users").doc(user.uid);
-  let gpxToShow;
-  await dataUser
-    .get()
-    .then((doc) => {
-      if (doc.exists) {
-        gpxToShow = doc.data().gpx;
-        console.log("Document data:", gpxToShow);
-      } else {
-        console.log("no such document !");
-      }
-    })
-    .catch((error) => {
-      console.log("Error getting document: ", error);
-    });
-  return gpxToShow;
-}
-
+/**
+ * Get user details
+ * @param {object} user User object
+ * @returns {object} Result of fetch process
+ */
 export async function getUserParams(user) {
-  var userObj = db
+  let result = { err: "", message: "", response: "" };
+  await db
     .collection("users")
     .doc(user.uid)
     .get()
     .then((doc) => {
       if (doc.exists) {
-        console.log("User found", doc.data());
-        return doc.data();
+        result = { err: "", message: "Success", response: doc.data() };
       } else {
-        console.log("no such document !");
+        result = { err: "Not found", message: `User not found!`, response: "" };
       }
     })
     .catch((error) => {
-      console.log("Error getting document: ", error);
+      result = { err: "Error", message: `Error getting user details: ${error}`, response: "" };
     });
 
-  return userObj;
+  return result;
 }
-
-export async function getPoisByUser(user, isAdmin) {
-  let pois = [];
+/**
+ * Get POI history by user
+ * @param {object} user user object
+ * @returns {object} Result of fetch process
+ */
+export async function getPoisByUser(user) {
+  let result = { err: "", message: "", response: "" };
   let myuser = await getUserParams(user);
   let poisToShow = myuser.pois;
-  console.log(poisToShow);
-  for (let poi in poisToShow) {
-    const poiRef = db.collection("pois").doc(poisToShow[poi]);
-    const found = await poiRef.get().then((doc) => doc.exists);
-    if (found) {
-      await poiRef.get().then((doc) => pois.push({ id: doc.id, ...doc.data() }));
-    }
-  }
-
-  return pois;
-}
-
-export async function getAllPois() {
-  const events = db.collection("pois");
-  const tempDoc = [];
-  await events.get().then((querySnapshot) => {
-    querySnapshot.forEach((doc) => {
-      tempDoc.push({ id: doc.id, ...doc.data() });
+  await db
+    .collection("pois")
+    .get()
+    .then((querySnapshot) => {
+      let pois = [];
+      querySnapshot.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        if (poisToShow.includes(doc.id)) pois.push({ id: doc.id, ...doc.data() });
+      });
+      result = { err: "", message: "Success", response: pois };
+    })
+    .catch((error) => {
+      result = { err: "Error", message: `Error getting user pois: ${error}`, response: "" };
     });
-    console.log(tempDoc);
-  });
-  return tempDoc;
+
+  return result;
 }
 
+/**
+ * Get all pois from database
+ * @returns {object} Result of the fetch process
+ */
+export async function getAllPois() {
+  let result = { err: "", message: "", response: "" };
+  const events = db.collection("pois");
+  await events
+    .get()
+    .then((querySnapshot) => {
+      const tempDoc = [];
+      querySnapshot.forEach((doc) => {
+        tempDoc.push({ id: doc.id, ...doc.data() });
+      });
+      result = { err: "", message: "Success", response: tempDoc };
+    })
+    .catch((error) => {
+      result = { err: "Error", message: `Error getting pois: ${error}`, response: "" };
+    });
+  return result;
+}
+
+/**
+ * Updating poi
+ * @param {string} id id of poi
+ * @param {object} fields poi fields
+ * @returns {object} Result of update process
+ */
 export async function updatePoi(id, fields) {
   //this method try to find a document with a given id and modify it.
   //if the doc doesn't exist it will return "not found"
@@ -137,6 +177,11 @@ export async function updatePoi(id, fields) {
   return result;
 }
 
+/**
+ *
+ * @param {object} fields poi fields
+ * @returns {object} Result of insert process
+ */
 export async function addPoi(fields) {
   let result = { err: "", message: "" };
   const dbCollection = db.collection("pois");

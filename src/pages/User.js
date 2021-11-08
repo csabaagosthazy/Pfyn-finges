@@ -1,49 +1,62 @@
 import { useAuth } from "../context/Auth2";
-import { getGPXAsString, getPoisByUser } from "../services/dbService";
+import { getGPXAsString, getPoisByUser, showGPX } from "../services/dbService";
 import PopUpModal from "../components/modal/PopUpModal";
 import DataTable from "../components/table/DataTable";
 import MapView from "../components/MapView";
 import QrCodeHandler from "../components/qrcode/QrCodeHandler";
 
 import { useCallback, useEffect, useState } from "react";
-import { Dropdown, Button, Container, Col, Row, Spinner } from "react-bootstrap";
+import { Container, Col, Row, Spinner } from "react-bootstrap";
 
 const UserPage = () => {
   const { currentUser } = useAuth();
   const [showQrModal, setShowQrModal] = useState(false);
-  const [mapData, setMapData] = useState([]);
+  const [mapData, setMapData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [qrRef, setQrRef] = useState();
 
-  const [gpxHistory, setgpxHistory] = useState();
-  const [gpx, setgpx] = useState();
-  const [pois, setPois] = useState();
+  const [gpxHistory, setgpxHistory] = useState(null);
+  let [positions, setPositions] = useState(null);
+  const [pois, setPois] = useState(null);
 
   const handleShowQr = () => setShowQrModal(true);
   const handleCloseQr = () => setShowQrModal(false);
 
-  const GpxToDisplay = useCallback(async () => {
+  const getUserHistory = useCallback(async () => {
     setLoading(true);
-    let history = await getGPXAsString(currentUser);
-    setgpxHistory(history);
-    setgpx(history[history.length - 1]);
-    let poisList = await getPoisByUser(currentUser, false);
-    setPois(poisList);
+    let userGpx = await getGPXAsString(currentUser);
+    if (!userGpx.err && userGpx.response.length > 0) {
+      setgpxHistory(userGpx.response);
+      let res = await showGPX(userGpx.response[0]);
+      if (!res.err) {
+        setPositions(res.response);
+      }
+    }
+    let poiList = await getPoisByUser(currentUser);
+
+    if (!poiList.err && poiList.response.length > 0) {
+      setPois(poiList.response);
+    }
     setLoading(false);
   }, []);
 
   useEffect(() => {
-    GpxToDisplay();
+    getUserHistory();
   }, []);
 
-  function handleClick(event) {
+  const setMapGpx = useCallback(async (event) => {
+    setLoading(true);
     event.preventDefault();
-    console.log("gpx User", event.target.name);
-    setgpx(event.target.name);
-  }
+    let res = await showGPX(event.target.name);
+    if (!res.err) {
+      setPositions(res.response);
+    }
+    setLoading(false);
+  }, []);
+
   const showQr = (website) => {
     //creates an image
-    console.log(website);
+
     setQrRef(website);
     handleShowQr();
   };
@@ -51,7 +64,7 @@ const UserPage = () => {
     setMapData(selectedPois);
   };
 
-  if (!gpx || !pois || loading)
+  if (loading)
     return (
       <Spinner
         animation="border"
@@ -82,20 +95,12 @@ const UserPage = () => {
           </Row>
           <Row style={style.mapRow}>
             <Col style={style.table}>
-              <Dropdown>
-                <Dropdown.Toggle variant="success" id="dropdown-basic" style={style.mapDropdown}>
-                  History
-                </Dropdown.Toggle>
-
-                <Dropdown.Menu>
-                  {gpxHistory.map((jesus, index) => (
-                    <Dropdown.Item name={jesus} onClick={(event) => handleClick(event)} key={index}>
-                      {jesus}
-                    </Dropdown.Item>
-                  ))}
-                </Dropdown.Menu>
-              </Dropdown>
-              <MapView pois={mapData} gpx={gpx} />
+              <MapView
+                pois={mapData}
+                positions={positions}
+                gpxHistory={gpxHistory}
+                setGpx={setMapGpx}
+              />
             </Col>
           </Row>
         </Container>

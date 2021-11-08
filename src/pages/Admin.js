@@ -105,9 +105,8 @@ const AdminPage = () => {
   };
 
   const PoisToDisplay = useCallback(async () => {
-    let poisList = await getAllPois();
-    console.log(poisList);
-    setPois(poisList);
+    let poiList = await getAllPois();
+    if (!poiList.err) setPois(poiList.response);
   }, []);
 
   useEffect(() => {
