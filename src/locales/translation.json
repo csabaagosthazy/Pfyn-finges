@@ -42,12 +42,8 @@
     "vector_bg": "Vector background created by upklyak - fr.freepik.com",
     "auth_success": "Authorization success !",
     "auth_failed": "Authorization failed !",
-    "success": "Success !",
-    "not_found": "Not found !",
-    "gpx_not_found": "Gpx not found !",
-    "error": "Error !",
-    "error_doc": "Error getting document.",
-    "no_gpx_stored": "No gpx stored !"
+    "hey": "Hey, nice to see you !",
+    "no_points_visited": "Unfortunately it seems you haven't visited any points yet. Later you will be able to see here your personal history."
   },
   "fr": {
     "welcome_title": "Bienvenue à Pfyn-Finges !",
@@ -91,6 +87,8 @@
     "for_info": "Pour plus d'informations, veuillez lire notre guide d'utilisation",
     "vector_bg": "Fond vecteur créé par upklyak - fr.freepik.com",
     "auth_success": "Succès d'autorisation !",
-    "auth_failed": "Échec d'autorisation !"
+    "auth_failed": "Échec d'autorisation !",
+    "hey": "Hé, content de vous voir !",
+    "no_points_visited": "Malheureusement, il semble que vous n'ayez encore visité aucun point. Plus tard, vous pourrez voir ici votre historique personnel."
   }
 }

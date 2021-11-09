@@ -116,13 +116,12 @@ export default function DataTable({
     if (!data)
         return (
             <Alert variant="success">
-                <Alert.Heading>Hey, nice to see you</Alert.Heading>
+                <Alert.Heading>{translation[language].hey}</Alert.Heading>
                 <p>
-                    Unfortunately it seems you haven't visited any points yet. Later you will be able to see
-                    here your personal history.
+                    {translation[language].no_points_visited}
                 </p>
                 <hr/>
-                <p className="mb-0">For more information please read our user guide</p>
+                <p className="mb-0">{translation[language].for_info}</p>
             </Alert>
         );
     return (
