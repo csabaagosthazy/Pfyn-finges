@@ -21,14 +21,25 @@ export async function showGPX(gpx) {
         let parser = new DOMParser();
         let parsed = parser.parseFromString(data, "application/xml");
         let nodes = [...parsed.querySelectorAll("trkpt")];
-        let coords = nodes.map((node) => [node.attributes.lat.value, node.attributes.lon.value]);
+        let coords = nodes.map((node) => [
+          node.attributes.lat.value,
+          node.attributes.lon.value,
+        ]);
         result = { err: "", message: "Success!", response: coords };
       } else {
-        result = { err: "Not found!", message: `Gpx ${gpx} not found!`, response: "" };
+        result = {
+          err: "Not found!",
+          message: `Gpx ${gpx} not found!`,
+          response: "",
+        };
       }
     })
     .catch((error) => {
-      result = { err: "Error!", message: `Error getting document: ${error}`, response: "" };
+      result = {
+        err: "Error!",
+        message: `Error getting document: ${error}`,
+        response: "",
+      };
     });
 
   return result;
@@ -50,12 +61,20 @@ export async function getGPXAsString(user) {
         result = { err: "", message: "Success", response: doc.data().gpx };
       } else {
         console.log("no such document !");
-        result = { err: "Not found", message: `No gpx stored for user: ${user.uid}`, response: "" };
+        result = {
+          err: "Not found",
+          message: `No gpx stored for user: ${user.uid}`,
+          response: "",
+        };
       }
     })
     .catch((error) => {
       console.log("Error getting document: ", error);
-      result = { err: "Error", message: `Error getting user gpx: ${error}`, response: "" };
+      result = {
+        err: "Error",
+        message: `Error getting user gpx: ${error}`,
+        response: "",
+      };
     });
   return result;
 }
@@ -94,7 +113,11 @@ export async function getUserParams(user) {
       }
     })
     .catch((error) => {
-      result = { err: "Error", message: `Error getting user details: ${error}`, response: "" };
+      result = {
+        err: "Error",
+        message: `Error getting user details: ${error}`,
+        response: "",
+      };
     });
 
   return result;
@@ -115,12 +138,17 @@ export async function getPoisByUser(user) {
       let pois = [];
       querySnapshot.forEach((doc) => {
         // doc.data() is never undefined for query doc snapshots
-        if (poisToShow.includes(doc.id)) pois.push({ id: doc.id, ...doc.data() });
+        if (poisToShow.includes(doc.id) && doc.data().isActive)
+          pois.push({ id: doc.id, ...doc.data() });
       });
       result = { err: "", message: "Success", response: pois };
     })
     .catch((error) => {
-      result = { err: "Error", message: `Error getting user pois: ${error}`, response: "" };
+      result = {
+        err: "Error",
+        message: `Error getting user pois: ${error}`,
+        response: "",
+      };
     });
 
   return result;
@@ -143,7 +171,11 @@ export async function getAllPois() {
       result = { err: "", message: "Success", response: tempDoc };
     })
     .catch((error) => {
-      result = { err: "Error", message: `Error getting pois: ${error}`, response: "" };
+      result = {
+        err: "Error",
+        message: `Error getting pois: ${error}`,
+        response: "",
+      };
     });
   return result;
 }
@@ -169,7 +201,10 @@ export async function updatePoi(id, fields) {
         ...modifiedData,
       })
       .then((result = { err: "", message: "Document successfully written!" }))
-      .catch((err) => (result = { err: "Document couldn't be modified!", message: err }));
+      .catch(
+        (err) =>
+          (result = { err: "Document couldn't be modified!", message: err })
+      );
   } else {
     result = { err: "Not found", message: `Document with id ${id} not found!` };
   }
@@ -188,6 +223,8 @@ export async function addPoi(fields) {
   await dbCollection
     .add({ ...fields })
     .then((result = { err: "", message: "Document successfully written!" }))
-    .catch((err) => (result = { err: "Document couldn't be saved!", message: err }));
+    .catch(
+      (err) => (result = { err: "Document couldn't be saved!", message: err })
+    );
   return result;
 }
