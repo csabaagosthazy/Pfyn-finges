@@ -1,23 +1,11 @@
 import React from "react";
 import { useAuth } from "../context/Auth2";
-import forest from "../img/2040.jpg";
+import forest from "../assets/img/threes.jpg";
 import { useLang } from "../context/LanguageContext";
 import translation from "../locales/translation.json";
 
 const HomePage = () => {
-  const { currentUser, isAdmin } = useAuth();
   const { language } = useLang();
-
-  React.useEffect(() => {
-    console.log("Home");
-    if (currentUser) {
-      if (isAdmin) {
-        console.log("Admin");
-      } else {
-        console.log("User");
-      }
-    }
-  }, []);
 
   return (
     <div>

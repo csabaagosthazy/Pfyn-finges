@@ -1,8 +1,8 @@
 import React from "react";
 import QrCode from "qrcode.react";
 import { Button, Card } from "react-bootstrap";
-import translation from "../../locales/translation.json"
-import {useLang} from "../../context/LanguageContext";
+import translation from "../../locales/translation.json";
+import { useLang } from "../../context/LanguageContext";
 
 // download QR code
 const downloadQRCode = () => {
@@ -10,7 +10,6 @@ const downloadQRCode = () => {
     .getElementById("generatedQrCode")
     .toDataURL("image/png")
     .replace("image/png", "image/octet-stream");
-  console.log(qrCodeURL);
   let aEl = document.createElement("a");
   aEl.href = qrCodeURL;
   aEl.download = "QR_Code.png";
@@ -20,7 +19,7 @@ const downloadQRCode = () => {
 };
 
 const QrCodeHandler = ({ value, fullFunctions }) => {
-    const {language} = useLang();
+  const { language } = useLang();
 
   return (
     <Card className="text-center">
@@ -31,7 +30,7 @@ const QrCodeHandler = ({ value, fullFunctions }) => {
       {fullFunctions ? (
         <Card.Footer className="text-muted">
           <Button variant="primary" onClick={downloadQRCode}>
-              {translation[language].download}
+            {translation[language].download}
           </Button>
         </Card.Footer>
       ) : (

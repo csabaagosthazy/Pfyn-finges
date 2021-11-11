@@ -4,7 +4,7 @@ import translation from "../locales/translation.json";
 
 import { Form, Button, Card, Alert } from "react-bootstrap";
 import { Link, useHistory } from "react-router-dom";
-import {useLang} from "../context/LanguageContext";
+import { useLang } from "../context/LanguageContext";
 
 const Login = () => {
   const [email, setEmail] = useState();
@@ -13,7 +13,7 @@ const Login = () => {
   const { login, checkAdmin } = useAuth();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const {language} = useLang();
+  const { language } = useLang();
   const history = useHistory();
 
   useEffect(() => {
@@ -37,14 +37,9 @@ const Login = () => {
     } catch {
       setError("Failed to log in");
     } finally {
-      console.log(user);
-      console.log(!!user);
       if (isMounted.current) {
         setLoading(false);
         if (!!user) {
-          console.log("Yes user");
-          console.log(isAdmin);
-          alert(translation[language].auth_success);
           if (isAdmin) history.push("/admin");
           else history.push("/user");
         } else {
@@ -85,7 +80,8 @@ const Login = () => {
         </Card.Body>
       </Card>
       <div className="w-100 text-center mt-2">
-        {translation[language].need_account} <Link to="/signup">{translation[language].signup}</Link>
+        {translation[language].need_account}{" "}
+        <Link to="/signup">{translation[language].signup}</Link>
       </div>
     </>
   );

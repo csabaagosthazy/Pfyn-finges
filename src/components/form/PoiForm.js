@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 
 import { Form, Button } from "react-bootstrap";
 
-import translation from "../../locales/translation.json"
-import {useLang} from "../../context/LanguageContext";
+import translation from "../../locales/translation.json";
+import { useLang } from "../../context/LanguageContext";
 
 const PoiForm = ({ onSubmit, values }) => {
   const [id, setId] = useState("");
@@ -15,12 +15,19 @@ const PoiForm = ({ onSubmit, values }) => {
   const [isActive, setIsActive] = useState(true);
   const [validated, setValidated] = useState(false);
 
-  const {language} = useLang();
+  const { language } = useLang();
 
   useEffect(() => {
-    console.log(values);
     if (values) {
-      const { id, title, latitude, longitude, description, inputWebsite, isActive } = values;
+      const {
+        id,
+        title,
+        latitude,
+        longitude,
+        description,
+        inputWebsite,
+        isActive,
+      } = values;
       setId(id);
       setTitle(title);
       setLatitude(latitude);
@@ -33,7 +40,6 @@ const PoiForm = ({ onSubmit, values }) => {
 
   const handleSubmit = async (e) => {
     const form = e.currentTarget;
-    console.log(form.checkValidity());
     if (form.checkValidity() === false) {
       e.preventDefault();
       e.stopPropagation();
@@ -42,7 +48,16 @@ const PoiForm = ({ onSubmit, values }) => {
 
     if (form.checkValidity()) {
       e.preventDefault();
-      onSubmit(e, id, title, latitude, longitude, description, inputWebsite, isActive);
+      onSubmit(
+        e,
+        id,
+        title,
+        latitude,
+        longitude,
+        description,
+        inputWebsite,
+        isActive
+      );
     }
   };
 
@@ -106,7 +121,11 @@ const PoiForm = ({ onSubmit, values }) => {
             required
           />
         </Form.Group>
-        <Form.Group className="mb-3" controlId="activeCheck" style={style.fromGroup}>
+        <Form.Group
+          className="mb-3"
+          controlId="activeCheck"
+          style={style.fromGroup}
+        >
           <Form.Check
             type="checkbox"
             label={translation[language].activate_poi}

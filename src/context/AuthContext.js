@@ -1,7 +1,6 @@
 import React, { useContext, useState, useEffect } from "react";
 
 import { firebase } from "../initFirebase";
-import { getAuth, signOut } from "firebase/auth";
 
 // React Context variable
 const AuthContext = React.createContext(null);
@@ -20,18 +19,22 @@ export const AuthProvider = ({ children }) => {
   // Listen to the Firebase Auth state and set the local state.
   useEffect(() => {
     setLoading(true);
-    const unregisterAuthObserver = firebase.auth().onAuthStateChanged(async (user) => {
-      setIsAuthenticated(!!user);
-      setUser(user);
+    const unregisterAuthObserver = firebase
+      .auth()
+      .onAuthStateChanged(async (user) => {
+        setIsAuthenticated(!!user);
+        setUser(user);
 
-      if (firebase.auth().currentUser) {
-        // Get the ID token which contains the "custom claims" to know about the admin status of the user
-        let idTokenResult = await firebase.auth().currentUser.getIdTokenResult(true);
+        if (firebase.auth().currentUser) {
+          // Get the ID token which contains the "custom claims" to know about the admin status of the user
+          let idTokenResult = await firebase
+            .auth()
+            .currentUser.getIdTokenResult(true);
 
-        // Set admin status based on "admin" custom claim
-        setIsAdmin(!!idTokenResult.claims.admin);
-      }
-    });
+          // Set admin status based on "admin" custom claim
+          setIsAdmin(!!idTokenResult.claims.admin);
+        }
+      });
     setLoading(false);
     // Make sure we un-register Firebase observers when the component unmounts.
     return () => unregisterAuthObserver();
@@ -46,7 +49,9 @@ export const AuthProvider = ({ children }) => {
 
   // Render the context provider and provide the "isAuthenticated" & "isAdmin" values
   return (
-    <AuthContext.Provider value={{ loading, isAuthenticated, user, isAdmin, signOut }}>
+    <AuthContext.Provider
+      value={{ loading, isAuthenticated, user, isAdmin, signOut }}
+    >
       {children}
     </AuthContext.Provider>
   );

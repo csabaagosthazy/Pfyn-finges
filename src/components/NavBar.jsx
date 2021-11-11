@@ -13,7 +13,6 @@ export const Navigation = (props) => {
   //auth user and role needed
   const { currentUser, logout, isAdmin } = useAuth();
   const { changeLanguage, language } = useLang();
-  console.log("navbar");
   return (
     <Navbar bg="dark" variant="dark">
       <Container>
@@ -22,13 +21,17 @@ export const Navigation = (props) => {
           <Nav.Item as="li">
             {currentUser && (
               <Nav.Link href={isAdmin ? "/admin" : "/user"}>
-                {isAdmin ? translation[language].administration : translation[language].account}
+                {isAdmin
+                  ? translation[language].administration
+                  : translation[language].account}
               </Nav.Link>
             )}
           </Nav.Item>
           <Nav.Item as="li">
             {currentUser && isAdmin && (
-              <Nav.Link href={"/user"}>{translation[language].user_page}</Nav.Link>
+              <Nav.Link href={"/user"}>
+                {translation[language].user_page}
+              </Nav.Link>
             )}
           </Nav.Item>
         </Nav>
@@ -52,7 +55,7 @@ export const Navigation = (props) => {
         </Nav>
         <Dropdown>
           <Dropdown.Toggle variant="success" id="dropdown-basic">
-            {language === 'en' ? ('English') : ('Français')}
+            {language === "en" ? "English" : "Français"}
           </Dropdown.Toggle>
           <Dropdown.Menu>
             {languagesList.map(({ code, name, country_code }) => (

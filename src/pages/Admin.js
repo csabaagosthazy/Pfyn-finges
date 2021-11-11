@@ -7,8 +7,8 @@ import MapView from "../components/MapView";
 import QrCodeHandler from "../components/qrcode/QrCodeHandler";
 import InfoToast from "../components/toast/InfoToast";
 import { getAllPois, updatePoi, addPoi } from "../services/dbService";
-import translation from "../locales/translation.json"
-import {useLang} from "../context/LanguageContext";
+import translation from "../locales/translation.json";
+import { useLang } from "../context/LanguageContext";
 
 const AdminPage = () => {
   const [showNew, setShowNew] = useState(false);
@@ -23,7 +23,7 @@ const AdminPage = () => {
   const [qrRef, setQrRef] = useState();
   const [toastProp, setToastProp] = useState({ message: "", type: "" });
 
-  const {language} = useLang();
+  const { language } = useLang();
 
   const handleShowNew = () => setShowNew(true);
   const handleCloseNew = () => setShowNew(false);
@@ -32,11 +32,8 @@ const AdminPage = () => {
   const handleShowQr = () => setShowQrModal(true);
   const handleCloseQr = () => setShowQrModal(false);
 
-  console.log("POI for admin", pois);
-
   const changePoiActivity = useCallback(async (id, isActive) => {
     setLoading(true);
-    console.log(id, isActive);
     const fields = { isActive: !isActive };
     const result = await updatePoi(id, fields);
     PoisToDisplay();
@@ -50,26 +47,38 @@ const AdminPage = () => {
   }, []);
 
   const editPoi = (id) => {
-    console.log(id);
     let poiData = pois.find((poi) => poi.id === id);
     poiData = { ...poiData, id };
-    console.log(poiData);
     setPoiToEdit(poiData);
     handleShowEdit();
   };
   const showQr = (website) => {
     //creates an image
-    console.log(website);
     setQrRef(website);
     handleShowQr();
   };
 
   const onSubmit = useCallback(
-    async (event, id, title, latitude, longitude, description, inputWebsite, isActive) => {
+    async (
+      event,
+      id,
+      title,
+      latitude,
+      longitude,
+      description,
+      inputWebsite,
+      isActive
+    ) => {
       event.preventDefault();
       setLoading(true);
-      console.log("submit");
-      const fields = { title, latitude, longitude, description, inputWebsite, isActive };
+      const fields = {
+        title,
+        latitude,
+        longitude,
+        description,
+        inputWebsite,
+        isActive,
+      };
       const result = await addPoi(fields);
       await PoisToDisplay();
       if (result.err) {
@@ -85,12 +94,26 @@ const AdminPage = () => {
   );
 
   const onEdit = useCallback(
-    async (event, id, title, latitude, longitude, description, inputWebsite, isActive) => {
+    async (
+      event,
+      id,
+      title,
+      latitude,
+      longitude,
+      description,
+      inputWebsite,
+      isActive
+    ) => {
       event.preventDefault();
-      console.log("edit : ");
-      console.log(event.target);
       setLoading(true);
-      const fields = { title, latitude, longitude, description, inputWebsite, isActive };
+      const fields = {
+        title,
+        latitude,
+        longitude,
+        description,
+        inputWebsite,
+        isActive,
+      };
       const result = await updatePoi(id, fields);
       await PoisToDisplay();
       if (result.err) {
@@ -114,7 +137,6 @@ const AdminPage = () => {
   }, []);
 
   useEffect(() => {
-    console.log("Admin rendered");
     PoisToDisplay();
   }, []);
 
@@ -136,7 +158,7 @@ const AdminPage = () => {
           type={toastProp.type}
         />
 
-          <h1>{translation[language].welcome_admin}</h1>
+        <h1>{translation[language].welcome_admin}</h1>
 
         <PopUpModal
           title={translation[language].new_poi}
@@ -168,7 +190,7 @@ const AdminPage = () => {
                 fullFunctions={true}
               />
               <Button style={style.tableButton} onClick={handleShowNew}>
-                  {translation[language].new_poi}
+                {translation[language].new_poi}
               </Button>
             </Col>
           </Row>

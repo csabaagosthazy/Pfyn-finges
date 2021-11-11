@@ -60,7 +60,6 @@ export async function getGPXAsString(user) {
       if (doc.exists) {
         result = { err: "", message: "Success", response: doc.data().gpx };
       } else {
-        console.log("no such document !");
         result = {
           err: "Not found",
           message: `No gpx stored for user: ${user.uid}`,
@@ -69,7 +68,6 @@ export async function getGPXAsString(user) {
       }
     })
     .catch((error) => {
-      console.log("Error getting document: ", error);
       result = {
         err: "Error",
         message: `Error getting user gpx: ${error}`,
