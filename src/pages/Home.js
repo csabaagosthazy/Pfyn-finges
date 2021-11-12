@@ -8,15 +8,15 @@ const HomePage = () => {
   const { language } = useLang();
 
   return (
-    <div>
+    <container>
       <h1>{translation[language].welcome_title}</h1>
       <img src={forest} alt="Forest" width="800" />
       <p>
-        <a href="https://fr.freepik.com/vecteurs/fond">
+        <a href="https://fr.freepik.com/vecteurs/fond" position="relative">
           {translation[language].vector_bg}
         </a>
       </p>
-    </div>
+    </container>
   );
 };
 
